@@ -1,0 +1,397 @@
+---
+title: 'Project 2: Modeling, Testing, and Predicting'
+author: "SDS348"
+date: '2020-11-21'
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+hook_output = knit_hooks$get('output')
+knit_hooks$set(output = function(x, options) {
+  # this hook is used only when the linewidth option is not NULL
+  if (!is.null(n <- options$linewidth)) {
+    x = knitr:::split_lines(x)
+    # any lines wider than n should be wrapped
+    if (any(nchar(x) > n)) x = strwrap(x, width = n)
+    x = paste(x, collapse = '\n')
+  }
+  hook_output(x, options)
+})
+
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,fig.align="center",warning=FALSE,message=FALSE,fig.width=8, fig.height=5, linewidth=60)
+options(tibble.width = 100,width = 100)
+library(tidyverse)
+```
+
+# Modeling
+
+## Guidelines and Rubric
+
+- **0. (5 pts)** Introduce your dataset and each of your variables (or just your main variables if you have lots) in a paragraph. What are they measuring? How many observations?
+
+My dataset contains data regarding global land temperature change of major cities in the world collected from 1849 to 2013. The variables of this dataset are date (dt), average temperature, average temperature uncertainty, city, country, latitude, and longitude. `dt` contains year, month, and day that the data was collected (yyyy-mm-dd). `AverageTemperature` is temperature in Celcius, and `AverageTemperatureUncertainty` is the 95% confidence interval around the average temperature. `City` and `Country` contain names of cities and countries, respectively. `Latitude` and `Longitude` describe the geographical latitude and longitude of each city. There are total of 7 variables and 239,177 observations. However, for this project, I am going to alter the dataset by only selecting cities in the United States, removing all the NA's, and separating `dt` to `year`, `month`, and `day`. Thus, there are total of 9 variables (7 categorical and 2 numeric) and 8,237 observations.
+
+```{r}
+library(dplyr)
+select <- dplyr::select
+library(tidyverse)
+library(lmtest)
+library(sandwich)
+
+globalTemp <- read_csv("GlobalLandTemperaturesByMajorCity.csv")
+
+globalTemp %>% filter(Country == "United States") %>% na.omit() %>% separate(dt, sep = "-", into = c("Year", "Month", "Day")) ->  us
+head(us)
+us %>% count()
+```
+
+- **1. (15 pts)** Perform a MANOVA testing whether any of your numeric variables (or a subset of them, if including them all is unreasonable or doesn't make sense) show a mean difference across levels of one of your categorical variables (3). If they do, perform univariate ANOVAs to find response(s) showing a mean difference across groups (3), and perform post-hoc t tests to find which groups differ (3). Discuss the number of tests you have performed, calculate the probability of at least one type I error (if unadjusted), and adjust the significance level accordingly (bonferroni correction) before discussing significant differences (3). Briefly discuss MANOVA assumptions and whether or not they are likely to have been met (no need for anything too in-depth) (2).
+
+```{r}
+#MANOVA
+man_us <- manova(cbind(AverageTemperature,AverageTemperatureUncertainty)~City, data=us)
+summary(man_us)
+
+#univariate ANOVAs
+summary.aov(man_us)
+
+#post-hoc t-tests
+us %>% group_by(City) %>% summarize(mean(AverageTemperature), mean(AverageTemperatureUncertainty))
+
+pairwise.t.test(us$AverageTemperature,us$City, p.adj="none")
+pairwise.t.test(us$AverageTemperatureUncertainty,us$City, p.adj="none")
+
+#multivariate normality
+ggplot(us, aes(x = AverageTemperature, y = AverageTemperatureUncertainty)) +
+geom_point(alpha = .5) + geom_density_2d(h=2) + facet_wrap(~City)
+```
+
+I conducted a one-way MANOVA to determine the effect of the US Cities (Chicago, Los Angeles, and New York) on two numeric variables (Average Temperature and Average Temperature Uncertainty). 
+
+For my MANOVA testing, my null hypothesis is that for both numeric variables (`AverageTemperature` and `AverageTemperatureUncertainty`), means for each City are equal. My alternative hypothesis is that for at least one numeric variable, at least one City mean is different. According to my MANOVA testing, there is a significant mean different across cities (At least one city differs for at least one response variable) (pseudo F(4, 16468) = 238.38, p < 0.0001).
+
+So, I performed univariate ANOVAs to find which numeric variable is significant. Doing so, I found that both numeric variables are significant and present group differences. This means that for Average Temperature and Average Temperature Uncertainty, at least one City differs (pseudo F(2, 8234) = 136.96, p < 0.0001).
+
+Then, I ran t-tests to find which groups differ in `AverageTemperature`. I also ran t-tests for `AverageTemperatureUncertainty`. I performed total of 9 tests (1 MANOVA, 2 ANOVAS, and 6 t-tests). The probability of at least one type I error is 0.3698 (1-0.95^9=0.3698), and the bonferroni alpha value is 0.0056 (0.05/9=0.0056). 
+
+With no adjustment, the comparisons among all of the cities are statistically significant in Average Temperature. For Average Temperature Uncertainty, the comparisons between Chicago and Los Angeles as well as between New York and Los Angeles are statistically significant; however, the comparison between Chicago and New York is not. However, using the Bonferroni value of 0.0056, only the comparisons between Chicago and Los Angeles and between New York and Los Angeles are significant for both Average Temperature and Average Temperature Uncertainty. 
+
+MANOVA assumptions are 1) samples are random and independent, 2) there is a multivariate normality of dependent variables, 3) there is homogeneity of within-group covariance matrices, 4) there are linear relationships among dependent variables, 5) there are no extreme univariate or multivariate outliers, and 6) there is no multicollinearity. It is difficult to tell if any of these assumptions were met in my dataset, especially because data in my dataset are not random and does not have multivariate normality. There might be homogeneity of covariances, but I am not too sure. In conclusion, it is likely that my data does not meet most of the MANOVA assumptions. 
+
+
+- **2. (10 pts)** Perform some kind of randomization test on your data (that makes sense). The statistic can be anything you want (mean difference, correlation, F-statistic/ANOVA, chi-squared), etc. State null and alternative hypotheses, perform the test, and interpret the results (7). Create a plot visualizing the null distribution and the test statistic (3).
+
+```{r}
+# observed difference in means
+us %>% filter(Year %in% c("1850", "2013")) %>% group_by(Year) %>%
+  summarize(means=mean(AverageTemperature)) %>% summarize(`mean_diff`=diff(means))
+
+#randomization test
+rand_dist_us <- vector() #create vector to hold diffs under null hypothesis
+
+for(i in 1:5000){
+new<-data.frame(temp=sample(us$AverageTemperature),year=us$Year) #scramble columns
+rand_dist_us[i]<-mean(new[new$year=="1850",]$temp)-   
+              mean(new[new$year=="2013",]$temp)} #compute mean difference (base R)
+
+#p-values
+mean(rand_dist_us>2.5361 | rand_dist_us < -2.5361) #p-value > 0.05 so fail to reject H0!
+
+
+#t-test
+us %>% filter(Year %in% c("1850", "2013")) %>% group_by(Year) -> us2
+
+t.test(data=us2, AverageTemperature~Year) #same result
+
+
+
+#plot
+{hist(rand_dist_us ,main="", ylab=""); abline(v = c(-2.5361, 2.5361), col="red")}
+```
+
+For this question, I first selected Year 1850 and Year 2013 data and grouped the data by `Year`. I, then, calculated the mean differences of average temperature between those two years. The mean difference was 2.745, meaning that there was an increase in average temperature from 1850 and 2013. 
+
+Next, I performed a randomization test by doing 5000 random permutations of Average Temperature of Year 1850 and Year 2013. My null hypothesis is that the mean temperature is the same for Year 1850 and Year 2013, and my alternative hypothesis is that mean temperature is different for Year 1850 and Year 2013. I calculated for the p-value of this permutation test. The p-value of 0.4768 means that I fail to reject my null hypothesis because it is greater than 0.05. I also ran a t-test to confirm my result. Since the p-value of this t-test was 0.3953, I still fail to reject my null hypothesis. 
+
+I also created a plot that presents the null distribution that I got from the randomization test as well as the mean difference values (test statistic).
+
+
+
+- **3. (35 pts)** Build a linear regression model predicting one of your response variables from at least 2 other variables, including their interaction. Mean-center any numeric variables involved in the interaction.
+
+    - Interpret the coefficient estimates (do not discuss significance) (10)
+    - Plot the regression using `ggplot()` using geom_smooth(method="lm"). If your interaction is numeric by numeric, refer to code in the slides to make the plot or check out the `interactions` package, which makes this easier. If you have 3 or more predictors, just chose two of them to plot for convenience. (8)
+    - Check assumptions of linearity, normality, and homoskedasticity either graphically or using a hypothesis test (4)
+    - Regardless, recompute regression results with robust standard errors via `coeftest(..., vcov=vcovHC(...))`. Discuss significance of results, including any changes from before/after robust SEs if applicable. (8)
+    - What proportion of the variation in the outcome does your model explain? (4)
+
+
+```{r}
+#linear regression
+us2$AvgTemp_c <- us2$AverageTemperature - mean(us2$AverageTemperature) 
+us2$AvgTempUn_c <- us2$AverageTemperatureUncertainty - mean(us2$AverageTemperatureUncertainty) 
+
+fit_us2 <- lm(AvgTemp_c ~ City*AvgTempUn_c, data=us2) 
+summary(fit_us2)
+
+#ggplot
+ggplot(us2, aes(x=AvgTempUn_c, y=AvgTemp_c, group=City)) + geom_point(aes(color=City))+
+  geom_smooth(method="lm", se=F, fullrange=T, aes(color=City))+
+  theme(legend.position=c(0.9, 0.19)) + xlab("")
+
+#checking assumptions
+
+#linearity
+breaks <- seq(min(us2$AvgTempUn_c), max(us2$AvgTempUn_c), len=8)
+ggplot(us2, aes(AvgTempUn_c, AvgTemp_c)) + geom_point(alpha=.3) + theme_bw() +
+geom_vline(xintercept=breaks, lty=2,color='gray50')
+
+#normality
+resids<-lm(AvgTemp_c~AvgTempUn_c, data=us2)$residuals
+ggplot()+geom_histogram(aes(resids),bins=10)
+shapiro.test(resids)
+
+#homoskedasticity
+fitted<-lm(AvgTemp_c~AvgTempUn_c, data=us2)$fitted.values
+ggplot()+geom_point(aes(fitted,resids)) + geom_hline(yintercept=0, color='red')
+
+
+#uncorrected SE
+summary(fit_us2)
+
+#corrected SE 
+coeftest(fit_us2, vcov = vcovHC(fit_us2))
+```
+
+I first mean-centered `AverageTemperature` and conducted a linear regression to predict `AvgTemp_c` from three Cities and Average Temperature Uncertainty.
+
+The intercept value of -1.701  is mean/predicted Average Temperature for average `AvgTempUn_c` in Chicago. The coefficient estimate for Los Angeles, which is 6.010, means that the average temperature of Los Angeles is 6.010 degrees higher than that of Chicago. The coefficient value of -1.506 for New York means that New York's Average Temperature is 1.506 degrees lower than Chicago's Average Temperature.
+
+Estimated slope for Average Temperature Uncertainty on Average Temperature for the city of Chicago is -2.734. The slope of Average Temperature Uncertainty on Average Temperature for Los Angeles is 0.752 degrees higher than for Chicago. Finally, the slope of Average Temperature Uncertainty on Average Temperature for New York is 2.060 degrees lower than for Chicago. 
+
+According to my scatterplot, `AvgTempUn_c` and `AvgTemp_c` do not meet the linearity assumption. Since the null hypothesis for the Shapiro-Wilk test is that true distribution is normal, the p-value of 0.6433 suggests that I fail to reject the null hypothesis. Thus, the sample meets the normality assumption. Also, the histogram looks pretty normal. It is difficult to decide if the variance is constant, but it seems like it somewhat meets the homoskedasticity assumption because there is no obvious fanning out of data points.
+
+None of the estimate coefficient values changed much after recomputing my regression results. Only Los Angeles was the significant predicting factor of average temperature. According to the multiple R-squared value, 18.95% of variation in Average Temperature is explained. The adjusted R-squared says 3.11% is explained. 
+
+
+- **4. (5 pts)** Rerun same regression model (with the interaction), but this time compute bootstrapped standard errors (either by resampling observations or residuals). Discuss any changes you observe in SEs and p-values using these SEs compared to the original SEs and the robust SEs)
+
+```{r}
+fit_us2 <- lm(AvgTemp_c ~ City*AvgTempUn_c, data=us2) 
+
+boot_dat_us <- sample_frac(us2, replace=T)
+
+samp_distn_us <- replicate(5000, {
+  boot_dat_us <- sample_frac(us2, replace=T) #take bootstrap sample of rows
+  fit <- lm(AvgTemp_c ~ City*AvgTempUn_c, data=boot_dat_us) #fit model on bootstrap sample
+  coef(fit) #save coefs
+}) 
+ 
+## Estimated/boostrap SEs
+samp_distn_us %>% t %>% as.data.frame %>% summarize_all(sd) 
+
+## Empirical 95% CI
+samp_distn_us %>% t %>% as.data.frame %>% pivot_longer(1:6) %>% group_by(name) %>%
+ summarize(lower=quantile(value,.025), upper=quantile(value,.975))
+
+coeftest(fit_us2) #original SEs
+coeftest(fit_us2, vcov=vcovHC(fit_us2)) #robust SEs
+```
+
+Even after bootstrapping, all of the variables/interactions stayed the same. Los Angeles was still the only significant factor because its 95% intervals does not include 0. The rest of them did have 0, meaning that I cannot reject the null hypothesis of significance. Original SEs and robust SEs also show the same result.
+
+
+- **5. (25 pts)** Fit a logistic regression model predicting a binary variable (if you don't have one, make/get one) from at least two explanatory variables (interaction not necessary). 
+
+    - Interpret coefficient estimates in context (10)
+    - Report a confusion matrix for your logistic regression (2)
+    - Compute and discuss the Accuracy, Sensitivity (TPR), Specificity (TNR), Precision (PPV), and AUC of your model (5)
+    - Using ggplot, make a density plot of the log-odds (logit) colored/grouped by your binary outcome variable (3)
+    - Generate an ROC curve (plot) and calculate AUC (either manually or with a package); interpret (5)
+
+
+```{r}
+us %>% filter(Year %in% c("1800", "1900", "2000")) %>% mutate(y=ifelse(City=="Chicago",1,0)) -> us3
+
+us3$AvgTemp_c <- us3$AverageTemperature - mean(us3$AverageTemperature) 
+
+fit_us3 <- glm(y~AvgTemp_c+Year, data=us3, family=binomial(link="logit"))
+summary(fit_us3)
+exp(coef(fit_us3))
+
+
+#confusion matrix
+probs_us <- predict(fit_us3,type="response")
+table(predict=as.numeric(probs_us>.5),truth=us3$y) %>% addmargins
+
+#accuracy
+(55+6)/96
+
+#sensitivity (TPR)
+6/36
+
+#specificity (TNR)
+55/60 
+
+#precision (PPV)
+6/11
+
+
+#predicted probabilities
+fit_us4 <- glm(y~AvgTemp_c+Year, data=us3, family="binomial")
+us3$prob <- predict(fit_us4,type="response") 
+
+#density plot
+us3$logit <- predict(fit_us4,type="link") #get predicted logit scores (logodds)
+
+us3$y %>% as.character() -> us3$y2
+
+us3 %>% ggplot() + geom_density(aes(logit,color=y2,fill=y2), alpha=.4) +
+  theme(legend.position=c(.85,.85)) + geom_vline(xintercept=0) + xlab("predictor (logit)") 
+
+
+#ROC plot & AUC
+library(plotROC)
+ROCplot <- ggplot(us3)+geom_roc(aes(d=y, m=prob), n.cuts=0)
+ROCplot
+
+calc_auc(ROCplot)
+
+
+#classification diagnostics
+
+class_diag <- function(probs,truth){
+  #CONFUSION MATRIX: CALCULATE ACCURACY, TPR, TNR, PPV
+  tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+  f1=2*(sens*ppv)/(sens+ppv)
+
+  if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+  
+  #CALCULATE EXACT AUC
+  ord<-order(probs, decreasing=TRUE)
+  probs <- probs[ord]; truth <- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+  TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+  n <- length(TPR)
+  auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+  data.frame(acc,sens,spec,ppv,f1,auc)
+}
+
+prob_us1 <- predict(fit_us3,type="response")
+class_diag(prob_us1,us3$y)
+```
+
+The odds of a city being Chicago for when average temerature is 0 in Year 1800 is 0.957. Controlling for Year, for every additional degree in Average Temperature, odds of a city being Chicago is 0.978. Controlling for Average Temperature, odds of a city being Chicago for Year 1900 is 0.526 times odds of admissioin for Year 1800. Finally, controlling for Average Temperature, odds of a city being Chicago for Year 2000 is 0.529 times odds of admissioin for Year 1800. 
+
+The accuracy is 0.635, which means that the correct number of predictions over total predictions is 63.5%. The sensitivity is 0.167, meaning that the probability of correctly predicting a city being Chicago. The Specificity is 0.917, which represent the probability of predicting a city not being Chicago when it is not Chicago. The precision is 0.545, which is the proportion of predicted city being Chicago being actually Chicago. The AUC value is 0.609, which falls into the poor AUC category. This means that the probability that a randomly selected manual has a higher predicted probability than a randomly selected is only 60.9%. The ROC curve does not look very ideal either. I also performed classification diagnostics to confirm my results. 
+
+
+**6. (25 pts)** Perform a logistic regression predicting the same binary response variable from *ALL* of the rest of your variables (the more, the better!) 
+
+    - Fit model, compute in-sample classification diagnostics (Accuracy, Sensitivity, Specificity, Precision, AUC), and interpret (5)
+    - Perform 10-fold (or repeated random sub-sampling) CV with the same model and report average out-of-sample classification diagnostics (Accuracy, Sensitivity, Specificity, Precision, and AUC); interpret AUC and compare with the in-sample metrics (10)
+    - Perform LASSO on the same model/variables. Choose lambda to give the simplest model whose accuracy is near that of the best (i.e., `lambda.1se`). Discuss which variables are retained. (5)
+    - Perform 10-fold CV using only the variables lasso selected: compare model's out-of-sample AUC to that of your logistic regressions above (5)
+    
+    
+```{r}
+#classification diagnostics
+us3 %>% select(-Country, -Day, -y2, -City, -Latitude, -Longitude) -> us4
+
+fit_us5 <- glm(y~., data=us4, family="binomial")
+prob_us2 <- predict(fit_us5,type="response")
+
+class_diag(prob_us2,us4$y)
+
+
+#10-fold CV
+k=10 #choose number of folds
+
+data<-us4[sample(nrow(us4)),] #randomly order rows
+folds<-cut(seq(1:nrow(us4)),breaks=k,labels=F) #create folds
+
+diags<-NULL
+for(i in 1:k){
+## Create training and test sets
+  train<-data[folds!=i,]
+  test<-data[folds==i,]
+  truth<-test$y ## Truth labels for fold i
+  
+  ## Train model on training set (all but fold i)
+  fit<-glm(y~.,data=train,family="binomial")
+  
+  ## Test model on test set (fold i)
+  probs<-predict(fit,newdata = test,type="response")
+  
+  ## Get diagnostics for fold i
+  diags<-rbind(diags,class_diag(probs,truth))
+}
+summarize_all(diags,mean) #average diagnostics across all k folds
+
+
+#lasso
+library(glmnet)
+y<-as.matrix(us4$y) #grab response
+x<-model.matrix(y~.,data=us4)[,-1] #grab predictors
+head(x)
+
+cv<-cv.glmnet(x,y,family="binomial")
+lasso<-glmnet(x,y,family="binomial",lambda=cv$lambda.1se)
+coef(lasso)
+
+
+#10-fold CV lasso variable
+us4 <- us4 %>% mutate(Year1900=ifelse(us4$Year=="1900",1,0))
+
+k=10 #choose number of folds
+
+#create dummies for the ranks
+data <- us4[sample(nrow(us4)),] #randomly order rows
+folds <- cut(seq(1:nrow(us4)),breaks=k,labels=F) #create folds
+
+diags<-NULL
+
+for(i in 1:k){
+  ## Create training and test sets
+  train<-data[folds!=i,]
+  test<-data[folds==i,]
+  truth<-test$y
+  
+  ## Train model on training set
+  fit<-glm(y~Year1900, data=train,family="binomial")
+  probs<-predict(fit,newdata = test,type="response")
+  
+  ## Test model on test set (save all k results)
+  diags<-rbind(diags,class_diag(probs,truth))
+}
+
+diags %>% summarize_all(mean)
+```
+
+The accuracy is 0.594, which means that the correct number of predictions over total predictions is 59.4%. The sensitivity is 0.222, meaning that the probability of correctly predicting a city being Chicago. The specificity is 0.817, which represent the probability of predicting a city not being Chicago when it is not Chicago. The precision is 0.421, which is the proportion of predicted city being Chicago being actually Chicago. The AUC value is 0.644, which still falls into the poor AUC category. This means that the probability that a randomly selected manual has a higher predicted probability than a randomly selected is only 64.4%. The ROC curve does not look very ideal either. I also performed classification diagnostics to confirm my results. 
+
+When I performed 10-fold CV, I got the accuracy value of 0.408, which means that the correct number of predictions over total predictions is 40.8%. The sensitivity is 0.037, meaning that the probability of correctly predicting a city being Chicago. The specificity is 0.674, which represent the probability of predicting a city not being Chicago when it is not Chicago. The precision is 0.15, which is the proportion of predicted city being Chicago being actually Chicago. The AUC value is 0.453, which now falls into the very bad AUC category. This means that the probability that a randomly selected manual has a higher predicted probability than a randomly selected is only 45.3%. Compared to the in-sample metrics, every value is worse.
+
+I performed LASSO and found that Year1900 is the only and the most predictive variable. I also performed 10-fold CV using Year1900. The AUC value is 0.558, which falls under the bad AUC category. 
+
+...
+
+
+
+
+

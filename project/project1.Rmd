@@ -1,0 +1,332 @@
+---
+title: 'Project 1: Exploratory Data Analysis'
+author: "SDS348"
+date: '2020-10-18'
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+  pdf_document:
+    toc: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F,
+tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))
+```
+
+# Esther Kim (ek8435)
+
+## Data Wrangling and Data Exploration
+    
+### Rubric
+
+Prerequisite: Finding appropriate data from at least two sources per the instructions above: Failure to do this will result in a 0! You will submit a .Rmd file and a knitted document (pdf).
+
+#### 0. Introduction (4  pts)
+
+- Write a narrative introductory paragraph or two describing the datasets you have chosen, the variables they contain, how they were acquired, and why they are interesting to you. Expand on potential associations you may expect, if any.
+
+```{r}
+library(tidyverse)
+library(dplyr)
+
+icu<-read_csv("USE2_estimated_icu_20201011_0010.csv")
+covid<-read_csv("USE2_estimated_inpatient_covid_20201011_0010.csv")
+
+head(icu)
+head(covid)
+```
+
+The two datasets I have chosen are from the United States Department of Health & Human Services. The first dataset called `covid` is a data that contains the estimated numbers of admitted patients affected by COVID-19 and total number of in-patient hospital beds of each state. The data was collected daily from September 10th, 2020 to October 10th, 2020. The second dataset called `icu` is also a data collected from the states that consists the estimated numbers of patients in ICU and total number of ICU beds. This data was also collected daily from September 10th, 2020 to October 10th, 2020. Both of the datasets were collected through Health & Human Services TeleTracking and direct reports from state health departments.
+
+The `covid` dataset has 4 variables: state, date, covidbeds, and totalinpatientsbeds. The `icu` dataset also contains 4 variables: state, date, icubeds, and totalicubeds. I was interested in these datasets because they are very relevant to our world currently. Many people have lost their lives and their loved ones because of this virus. I wanted to look at if certain states or divisions of the US were more affected than the others. I think that the number of COVID patients admitted will have a positive correlation with the number of ICU patients because COVID patients who are admitted to the hospitals are more likely to be in a severe condition to be in ICU.
+
+
+#### 1. Tidying: Rearranging Wide/Long (8 pts)
+
+- Tidy the datasets (using the `tidyr` functions `pivot_longer`/`gather` and/or `pivot_wider`/`spread`) 
+- If you data sets are already tidy, be sure to use those functions somewhere else in your project
+- Document the process (describe in words what was done per the instructions)
+
+```{r}
+#making the dataset `covid` untidy
+covid %>% pivot_longer(contains("beds"), names_to="name", values_to="value") 
+
+#making the dataset `covid` tidy again
+covid %>% pivot_longer(contains("beds"), names_to="name", values_to="value") %>%
+  pivot_wider(names_from="name",values_from="value")
+```
+
+My datasets were already tidy, so I made them untidy, using `pivot_longer()` and made them tidy again with `pivot_wider()`. For the dataset `covid`, I selected the variables that contain "beds," which are `covidbeds` and `totalinpatientbeds`, and used `pivot_longer()` to make the dataset long. After this, `covidbeds` and `totalinpatientbeds` were combined under the column name `name`, and the corresponding values were under the column name `values`. Then, I made the dataset tidy by using `pivot_wider()` and recreating the columns called `covidbeds` and `totalinpatientbeds`.
+
+```{r}
+#making the dataset `icu` untidy
+icu %>% pivot_longer(contains("icu"), names_to="name", values_to="value")
+
+#making the dataset `icu` tidy again
+icu %>% pivot_longer(contains("icu"), names_to="name", values_to="value") %>%
+  pivot_wider(names_from="name",values_from="value")
+```
+
+I also made the dataset `icu` untidy and tidy again to demonstrate my knowledge. The only different thing I did here was that I selected the variables that contain "icu" instead of "beds."
+
+    
+#### 2. Joining/Merging (8 pts)
+
+- Join your datasets into one using a `dplyr` join function
+- If you have multiple observations on the joining variable in either dataset, fix this by collapsing via summarize
+- Discuss the process in words, including why you chose the join you did
+- Discuss which cases were dropped, if any, and potential problems with this
+
+```{r}
+#joining the datasets, using the function `inner_join()`
+inner_join(covid, icu) -> inner
+```
+
+I used the function `inner` to join my datasets because I did not want to include data that did not have a match on both datasets. Since the function `inner` keeps the rows that have a match on both datasets and drops any rows that do not intersect. This function makes sure that there are no new NAs in the dataset. 
+
+
+#### 3. Wrangling (40 pts)
+
+- Use all six core `dplyr` functions in the service of generating summary statistics (18 pts)
+    - Use mutate at least once to generate a variable that is a function of at least one other variable
+
+- Compute at least 10 summary statistics for using summarize and summarize with group_by (18 pts)
+    - Use at least 5 unique functions inside of summarize (e.g., mean, sd)
+    - At least 2 of these should group by a categorical variable. Create one by dichotomizing a numeric if necessary
+    - If applicable, at least 1 of these should group by two categorical variables
+    - Strongly encouraged to create a correlation matrix with `cor()` on your numeric variables
+
+- Summarize/discuss all results in no more than two paragraphs (4 pts)
+
+```{r}
+#making sure that there is no NAs in the dataset
+inner %>% na.omit -> inner
+
+#number of distinct values in the dataset
+inner %>% n_distinct()
+
+#grouping the states by the US Census Bureau Divisions
+inner %>% subset(!state == "CW") %>% subset(!state == "PR") -> inner2
+
+inner2 %>% separate(date,sep="/",into=c("month","day","year")) %>% mutate(month = recode(month, "9"="Sep", "10"="Oct")) %>% select(-day, -year) -> inner3
+  
+inner3 %>% mutate(division = recode(state, 
+                                    CT = "1", ME = "1", MA = "1", NH = "1", RI = "1", VT = "1",
+                                    NJ = "2", NY = "2", PA = "2", 
+                                    IL = "3", IN = "3", MI = "3", OH = "3", WI = "3",
+                                    IA = "4", KS = "4", MN = "4", MO = "4", NE = "4", ND = "4", SD = "4",
+                                    DE = "5", FL = "5", GA = "5", MD = "5", NC = "5", SC = "5", VA = "5", DC = "5", WV = "5",
+                                    AL = "6", KY = "6", MS = "6", TN = "6",
+                                    AR = "7", LA = "7", OK = "7", TX = "7",
+                                    AZ = "8", CO = "8", ID = "8", MT = "8", NV = "8", NM = "8", UT = "8", WY = "8",
+                                    AK = "9", CA = "9", HI = "9", OR = "9", WA = "9")) -> inner4
+```
+
+I first checked if there are any NAs in the dataset even after joining them using the `inner` function. After using `na.omit`, there were 1643 observations in the dataset. I noticed that the states "CW" and "PR" are not in the US and removed them from the dataset. I named the new dataset as `inner2`. Then, I used the functions `separate` and `mutate` to separate `date` into `month`, `day`, and `year` and to recode `9` and `10` in the variable `month` to `Sep` and `Oct`. This new dataset was named as `inner3` after I removed `day` and `year` from `inner2`. Finally, I created `inner4`, which has another column called `division`. All of the state abbreviations were assigned with division numbers according to the US Census Bureau, using the function `mutate`. 
+
+```{r}
+#exploring the dataset
+inner2 %>% n_distinct()
+inner4 %>% summarize(state=n_distinct(state))
+
+inner2 %>% group_by(state) %>% filter(covidbeds == max(covidbeds)) %>% arrange(desc(covidbeds))
+inner2 %>% filter(state == "TX") %>% select(-state) %>% arrange(desc(covidbeds))
+inner2 %>% filter(state == "TX") %>% mutate(covidpercent = covidbeds/totalinpatientbeds*100) %>% arrange(desc(covidpercent))
+
+inner4 %>% group_by(state, month) %>% arrange(icubeds)
+inner2 %>% filter(covidbeds == min(covidbeds))
+inner2 %>% mutate(covidpercent = covidbeds/totalinpatientbeds*100) %>% filter(covidpercent == max(covidpercent))
+
+inner4 %>% group_by(division) %>% summarize(meancovidbeds = mean(covidbeds))
+inner4 %>% group_by(division) %>% summarize(mediancovidbeds = median(covidbeds))
+
+#mean, sd, n, se
+inner4 %>% group_by(division) %>% summarize(mean=mean(covidbeds, na.rm=T),
+                                            sd=sd(covidbeds, na.rm=T),
+                                            n=n(),
+                                            se=sd/sqrt(n))
+
+
+inner4 %>% group_by(division, month) %>% summarize(mean=mean(covidbeds, na.rm=T),
+                                            sd=sd(covidbeds, na.rm=T),
+                                            n=n(),
+                                            se=sd/sqrt(n))
+
+inner4 %>% summarize(mean=mean(covidbeds, na.rm=T),
+                    sd=sd(covidbeds, na.rm=T),
+                    n=n(),
+                    se=sd/sqrt(n))
+
+inner4 %>% group_by(state) %>% summarize(mean=mean(covidbeds, na.rm=T),
+                                        sd=sd(covidbeds, na.rm=T),
+                                        n=n(),
+                                        se=sd/sqrt(n))
+
+inner4 %>% group_by(state) %>% summarize(mean=mean(totalinpatientbeds),
+                                        sd=sd(totalinpatientbeds),
+                                        n=n(),
+                                        se=sd/sqrt(n))
+
+inner4 %>% summarize(mean=mean(totalinpatientbeds, na.rm=T),
+                    sd=sd(totalinpatientbeds, na.rm=T),
+                    n=n(),
+                    se=sd/sqrt(n))
+
+inner4 %>% summarize(mean=mean(icubeds, na.rm=T),
+                    sd=sd(icubeds, na.rm=T),
+                    n=n(),
+                    se=sd/sqrt(n))
+
+inner4 %>% group_by(state) %>% summarize(mean=mean(icubeds, na.rm=T),
+                                        sd=sd(icubeds, na.rm=T),
+                                        n=n(),
+                                        se=sd/sqrt(n))
+
+inner4 %>% summarize(mean=mean(totalicubeds, na.rm=T),
+                    sd=sd(totalicubeds, na.rm=T),
+                    n=n(),
+                    se=sd/sqrt(n))
+
+inner4 %>% group_by(state) %>% summarize(mean=mean(totalicubeds, na.rm=T),
+                                        sd=sd(totalicubeds, na.rm=T),
+                                        n=n(),
+                                        se=sd/sqrt(n))
+
+#quantiles
+inner4 %>% select(covidbeds) %>% summarize(quants=quantile(covidbeds, na.rm=T))
+inner4 %>% select(totalinpatientbeds) %>% summarize(quants=quantile(totalinpatientbeds, na.rm=T))
+inner4 %>% select(icubeds) %>% summarize(quants=quantile(icubeds, na.rm=T))
+inner4 %>% select(totalicubeds) %>% summarize(quants=quantile(totalicubeds, na.rm=T))
+
+#correlations
+inner %>% select(covidbeds, totalinpatientbeds, icubeds, totalicubeds) %>% cor %>% round(3)
+```
+
+The total number of observations of `inner2` was 1581 observations, and the total number of states of `inner4` was 51. I found out that the state of Texas has the highest number of `covidbeds` and that Texas had the highest number of `covidbeds` on October 6th 2020. I also calculated the percentage of beds occupied by COVID patients. On October 6th, 2020, the percentage was 7.43%. I also learned that Wyoming had the lowest number of ICU beds occupied in September and that the state of Vermont had the lowest number of covidbeds, 0, for 3 days. The highest percent of beds occupied by COVID patient was 16.34% in South Dakota on October 7th, 2020. I also calculated the mean and median numbers of COVID beds occupied of each division. Whilte Division 7 had the highest average, Division 2 had the highest median. I computed the mean, standard deviation, number, and standard error of each division. When I just grouped the dataset by `division`, I got the overall values of each division. However, when I grouped the dataset by `division` and `month`, I got the values separated by month also. For example, the overall mean of `covidbeds` of Division 1 was 116.56, the mean in September was 106.85, and the mean in October was 136.97. If I do not group by anything, I get an average, standard deviation, number, and standard error of the entire dataset, which are 722.27, 836.02, 1581, 21.03, respectively. I also grouped the dataset by `state` and learned that Arkansas had a mean of 48.77 beds, standard deviation of 6.24, 31 observations, and standard error of 1.12. When grouped by `state`, the mean of `totalinpatientbeds` of Alabama was 1516.26, the standard deviation was 145.15, and the standard error was 11.13. The overall mean of `totalinpatientbeds` was 13897.92, the standard deviation was 15626.93, and the standard error was 393.0138. The overall mean of ICU beds was 1106.88, the standard deviation was 1228.08, and the standard error was 30.89. When the dataset was grouped by `state`, the state of California had the mean of 4921.84 ICU beds, the standard deviation of 118.90, and the standard error of 21.35. Finally, the overall mean of total ICU beds was 1570.12, the standard deviation was 1677.39, and the standard error was 42.19. Grouped by `state`, Washington, D.C. had the mean of 350.26 total ICU beds, the standard deviation of 11.49, and the standard error of 2.06. 
+
+I also calculated the 0th, 25th, 50th, 75th, and 100th quantiles of each numerical variable. The minimum number of `covidbeds` was 0 while the maximum number was 4324. The 25th percentile of `covidbeds` was 181, the 50th was 500, and the 75th was 928. The percentile values of `totalinpatientbeds` were 697, 3219, 9380, 16413, and 79418. Those of `icubeds` were 33, 261, 761, 1400, and 5903. Finally, those of `totalicubeds` were 697, 3219, 9380, 16413, and 79418. I also computed the correlations among the numerical variables. The highest correlation value was 0.999 which was between `totalinpatientbeds` and `icubeds` as well as `totalinpatientbeds` and `totalicubeds`.
+
+
+#### 4. Visualizing (30 pts)
+
+- Create a correlation heatmap of your numeric variables
+
+- Create two effective, polished plots with ggplot
+
+    - Each plot should map 3+ variables to aesthetics 
+    - Each plot should have a title and clean labeling for all mappings
+    - Change at least one default theme element and color for at least one mapping per plot
+    - For at least one plot, add more tick marks (x, y, or both) than are given by default
+    - For at least one plot, use the stat="summary" function
+    - Supporting paragraph or two (for each plot) describing the relationships/trends that are apparent
+    
+```{r}
+library(ggplot2)
+
+#HEATMAP
+cormat <- inner4 %>% select_if(is.numeric) %>% cor(use="pair")
+
+cormat %>% as.data.frame %>% rownames_to_column("var1") %>% 
+  pivot_longer(-1,names_to="var2",values_to="correlation") -> tidycor
+tidycor
+
+tidycor %>% 
+  ggplot(aes(var1, var2, fill=correlation))+geom_tile()+ 
+  geom_text(aes(label=round(correlation,2)))+ xlab("")+ylab("")+coord_fixed() +
+  scale_fill_gradientn(colors = c("lavenderblush1", "mistyrose", "aliceblue", "powderblue"), breaks=c(0,25,50,75,Inf)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  coord_fixed() + ggtitle("Heatmap of Numeric Variables") + 
+  ylab("Numeric Variables") + xlab("Numeric Variables")
+```
+
+This heatmap presents the correlations among my numerical variables: `covidbeds`, `totalinpatientbeds`, `icubeds`, `totalicubeds`. I first selected variables that are only numeric and found correlations among them. Then, I made them tidy, using `as.data.frame`, `rownames_to_column`, and `pivot_longer(-1)`. After that, I used `ggplot()`, `geom_tile()`, `geom_text()` to create the heatmap. I assigned colors to the ranges of colors to visualize the heatmap more effectively, using `scale_fill_gradientn()`. I rotated the variables on the x-axis by 45 degrees to prevent the texts from overlapping with one another. I also added a title, labels for x and y axes.
+
+This heatmap shows that all of the variables have strong positive correlations. Excluding the correlation value of 1, the highest correlation is 0.99 which is between the number of ICU beds and total ICU beds. The lowest correlation value is 0.9, and it is between the number of COVID patients and total patient beds.
+
+
+```{r}
+#GRAPH2
+inner4 %>% group_by(division, month) %>% summarize(mean=mean(covidbeds, na.rm=T),
+                                                    sd=sd(covidbeds, na.rm=T),
+                                                    n=n(),
+                                                    se=sd/sqrt(n)) %>%
+  ggplot(aes(division, mean, fill=month)) + scale_fill_hue(c=45, l=80) + geom_bar(stat="summary") + facet_wrap(~month) +
+  geom_errorbar(aes(y=mean, ymin=mean-se, ymax=mean+se, width=.5)) +
+  ggtitle("Average Number of Admitted COVID Patients by Divisions and Months") + ylab("Number of Admitted Patients") + xlab("Division")
+```  
+
+This graph displays the average numbers of admitted COVID patients by divisions and months. I first grouped the dataset by divisions and months and used the `summarize` function to calculate the mean, standard deviation, number, and standard error of `covidbeds` by each division and month. I then made a bar graph chart using `ggplot()` by divisions and faceted by months. I also adjusted the colors of the bars. I included the +/- 1 standard error bars using `geom_errorbar` and adjusted the width to 0.5. Finally, I added a title and labels of x and y axes. 
+
+This barchart shows us that Division 1 has the lowest number of patients admitted due to COVID-19 whilie Division 7 has the highest number of patients for both September and October. Texas is one of the Division 7 states. Since Texas had the highest numbers of COVID patients admitted out of all the states, the overall average number of COVID-19 patients in Division 7 was the highest. The barcharts of September and October are pretty similar. However, overall, the numbers of patients increased in October in most of the divisions except Division 9.  
+
+
+```{r}
+#GRAPH3
+inner4 %>% group_by(state) %>% filter(covidbeds == max(covidbeds)) %>% 
+  ggplot(aes(covidbeds, icubeds, color=division)) + geom_point(size=4) + 
+  scale_color_brewer(palette="Paired") +
+  scale_x_continuous(breaks=seq(0,4500, 500)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(breaks=seq(0,6000, 500)) +
+  ggtitle("COVID Beds vs. ICU Beds") + xlab("Highest Number of Beds Occupied by COVID-19 Patients") + ylab("Number of ICU Beds Occupied")
+```
+
+For this graph, I plotted the relationship between the highest number of COVID-19 patient beds and ICU beds. I first grouped the dataset `inner4` by states then filtered it by the highest number of COVID patients admitted of each state. Then, I plotted the highest number of COVID patients against the number of ICU beds using `ggplot()` and `geom_point()`. I adjusted the size and colors of the points as well. I also added manual tick marks that range from 0 to 4,500 that increase by 500 on the x-axis and from 0 to 6,000 that also increase by 500 on the y-axis. I added a title as well as labels for the x- and y-axes.
+
+Because those two variables have a strong positive relationship, the points are lined up pretty well going from the lower left side to the upper right side of the graph. The yellow dot on the upper right side is Texas because Texas had the highest number of COVID patients admitted to hospitals. The state of Vermont, which is in Division 1, has the lowest number of COVID beds occupied. This graph clearly displays that the average of COVID patients of Division 7 as shown in the second graph was the highest because of Texas. 
+
+    
+#### 5. Dimensionality Reduction (20 pts) 
+
+- Either k-means/PAM clustering or PCA (inclusive "or") should be performed on at least three numeric variables in your dataset
+
+    - All relevant steps discussed in class 
+    - A visualization of the clusters or the first few principal components (using ggplot2)
+    - Supporting paragraph or two describing results found 
+
+
+```{r}
+library(cluster) 
+
+sil_width<-vector()
+
+inner4 %>% select(-1, -2) -> inner5
+
+for(i in 2:10){
+  kms <- kmeans(inner5,centers=i)
+  sil <- silhouette(kms$cluster,dist(inner5)) 
+  sil_width[i]<-mean(sil[,3])
+} 
+
+ggplot() + geom_line(aes(x=1:10,y=sil_width)) + scale_x_continuous(name="k",breaks=1:10)
+
+pam <- inner5 %>% pam(k=2)
+pam
+plot(pam,which=2)
+
+pamclust <- inner5 %>% mutate(cluster=as.factor(pam$clustering))
+pamclust %>% ggplot(aes(covidbeds,icubeds,color=cluster)) + geom_point() +
+  ggtitle("Number of COVID Beds vs. Number of ICU Beds") + xlab("Number of COVID Beds Occupied") + ylab("Number of ICU Beds Occupied")
+
+pamclust %>% group_by(cluster) %>% summarize_if(is.numeric,mean,na.rm=T)
+
+inner5%>%slice(pam$id.med)
+
+#comparison to the actual plot
+inner4 %>% ggplot(aes(covidbeds,icubeds,color=covidbeds)) + geom_point()
+```
+
+I clustered my dataset using the k-means clustering and partioning around medoids (PAM). I first loaded the cluster package and created an empty vector that holds the average silhouette width. I created a new dataset called `inner5` by removing the catergorical variables which are on columns 1 and 2. I computed k-means and silhouette widths, and I took the averages of the silhouette widths. After the steps were repeated to stabilize the result, I graphed the goodness-of-fit. Because the silhouette width was the highest when k is 2, I concluded that 2 clusters are in PAM.
+
+I  then assigned `pam` with k=2 and plotted pam in order to interpret the average silhouette width. The two clusters had high average silhouette widths, meaning that there is a strong structure. The average silhouette width is 0.82. Then, I created a data called `pamclust` to visualize the two clusters. There are clear distinctions in clusters in the lower left and the upper right. I am surprised to see that the computation decided to divide the points clusted in the middle into two different clusters. Finally, I plotted a scatterplot of inner4 to compare it with the PAM plot. There are clear color distinctions in the lower left and  the upper right. There is not a clear  distinction in the middle, but I can see some color differences that might infer the result of the PAM clustering.
+
+
+#### 6. Neatness!
+
+- Your project should not knit to more than 30 or so pages (probably closer to 10)! You will lose points if you print out your entire dataset(s), have terrible formatting, etc. If you start your project in a fresh .Rmd file, you are advised to paste the set-up code from this document (lines 14-17) at the top of it: this will automatically truncate if you accidentally print out a huge dataset, etc. Imagine this is a polished report you are giving to your PI or boss to summarize your work researching a topic.
+
+...

@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Esther Kim" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>Project 1: Exploratory Data Analysis</title>
+    <meta name="generator" content="Hugo 0.79.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project1/">Project 1: Exploratory Data Analysis</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         October 18, 2020 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+<link href="../../rmarkdown-libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="../../rmarkdown-libs/anchor-sections/anchor-sections.js"></script>
+
+
+<div id="esther-kim-ek8435" class="section level1">
+<h1>Esther Kim (ek8435)</h1>
+<div id="data-wrangling-and-data-exploration" class="section level2">
+<h2>Data Wrangling and Data Exploration</h2>
+<div id="rubric" class="section level3">
+<h3>Rubric</h3>
+<p>Prerequisite: Finding appropriate data from at least two sources per the instructions above: Failure to do this will result in a 0! You will submit a .Rmd file and a knitted document (pdf).</p>
+<div id="introduction-4-pts" class="section level4">
+<h4>0. Introduction (4 pts)</h4>
+<ul>
+<li>Write a narrative introductory paragraph or two describing the datasets you have chosen, the variables they contain, how they were acquired, and why they are interesting to you. Expand on potential associations you may expect, if any.</li>
+</ul>
+<pre class="r"><code>library(tidyverse)
+library(dplyr)
+
+icu &lt;- read_csv(&quot;USE2_estimated_icu_20201011_0010.csv&quot;)
+covid &lt;- read_csv(&quot;USE2_estimated_inpatient_covid_20201011_0010.csv&quot;)
+
+head(icu)</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   state date    icubeds totalicubeds
+##   &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt;        &lt;dbl&gt;
+## 1 CW    9/10/20   56942        79693
+## 2 CW    9/11/20   56856        79569
+## 3 CW    9/12/20   55810        79489
+## 4 CW    9/13/20   54133        79389
+## 5 CW    9/14/20   54169        79441
+## 6 CW    9/15/20   56345        79903</code></pre>
+<pre class="r"><code>head(covid)</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   state date    covidbeds totalinpatientbeds
+##   &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;              &lt;dbl&gt;
+## 1 CW    9/10/20     39106             715375
+## 2 CW    9/11/20     38085             716669
+## 3 CW    9/12/20     37329             714291
+## 4 CW    9/13/20     36948             708206
+## 5 CW    9/14/20     37392             712517
+## 6 CW    9/15/20     37866             711547</code></pre>
+<p>The two datasets I have chosen are from the United States Department of Health &amp; Human Services. The first dataset called <code>covid</code> is a data that contains the estimated numbers of admitted patients affected by COVID-19 and total number of in-patient hospital beds of each state. The data was collected daily from September 10th, 2020 to October 10th, 2020. The second dataset called <code>icu</code> is also a data collected from the states that consists the estimated numbers of patients in ICU and total number of ICU beds. This data was also collected daily from September 10th, 2020 to October 10th, 2020. Both of the datasets were collected through Health &amp; Human Services TeleTracking and direct reports from state health departments.</p>
+<p>The <code>covid</code> dataset has 4 variables: state, date, covidbeds, and totalinpatientsbeds. The <code>icu</code> dataset also contains 4 variables: state, date, icubeds, and totalicubeds. I was interested in these datasets because they are very relevant to our world currently. Many people have lost their lives and their loved ones because of this virus. I wanted to look at if certain states or divisions of the US were more affected than the others. I think that the number of COVID patients admitted will have a positive correlation with the number of ICU patients because COVID patients who are admitted to the hospitals are more likely to be in a severe condition to be in ICU.</p>
+</div>
+<div id="tidying-rearranging-widelong-8-pts" class="section level4">
+<h4>1. Tidying: Rearranging Wide/Long (8 pts)</h4>
+<ul>
+<li>Tidy the datasets (using the <code>tidyr</code> functions <code>pivot_longer</code>/<code>gather</code> and/or <code>pivot_wider</code>/<code>spread</code>)</li>
+<li>If you data sets are already tidy, be sure to use those functions somewhere else in your project</li>
+<li>Document the process (describe in words what was done per the instructions)</li>
+</ul>
+<pre class="r"><code># making the dataset `covid` untidy
+covid %&gt;% pivot_longer(contains(&quot;beds&quot;), names_to = &quot;name&quot;, values_to = &quot;value&quot;)</code></pre>
+<pre><code>## # A tibble: 3,286 x 4
+##    state date    name                value
+##    &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;               &lt;dbl&gt;
+##  1 CW    9/10/20 covidbeds           39106
+##  2 CW    9/10/20 totalinpatientbeds 715375
+##  3 CW    9/11/20 covidbeds           38085
+##  4 CW    9/11/20 totalinpatientbeds 716669
+##  5 CW    9/12/20 covidbeds           37329
+##  6 CW    9/12/20 totalinpatientbeds 714291
+##  7 CW    9/13/20 covidbeds           36948
+##  8 CW    9/13/20 totalinpatientbeds 708206
+##  9 CW    9/14/20 covidbeds           37392
+## 10 CW    9/14/20 totalinpatientbeds 712517
+## # … with 3,276 more rows</code></pre>
+<pre class="r"><code># making the dataset `covid` tidy again
+covid %&gt;% pivot_longer(contains(&quot;beds&quot;), names_to = &quot;name&quot;, values_to = &quot;value&quot;) %&gt;% 
+    pivot_wider(names_from = &quot;name&quot;, values_from = &quot;value&quot;)</code></pre>
+<pre><code>## # A tibble: 1,643 x 4
+##    state date    covidbeds totalinpatientbeds
+##    &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;              &lt;dbl&gt;
+##  1 CW    9/10/20     39106             715375
+##  2 CW    9/11/20     38085             716669
+##  3 CW    9/12/20     37329             714291
+##  4 CW    9/13/20     36948             708206
+##  5 CW    9/14/20     37392             712517
+##  6 CW    9/15/20     37866             711547
+##  7 CW    9/16/20     37102             712376
+##  8 CW    9/17/20     35795             714760
+##  9 CW    9/18/20     35493             715606
+## 10 CW    9/19/20     34991             713507
+## # … with 1,633 more rows</code></pre>
+<p>My datasets were already tidy, so I made them untidy, using <code>pivot_longer()</code> and made them tidy again with <code>pivot_wider()</code>. For the dataset <code>covid</code>, I selected the variables that contain &quot;beds,&quot; which are <code>covidbeds</code> and <code>totalinpatientbeds</code>, and used <code>pivot_longer()</code> to make the dataset long. After this, <code>covidbeds</code> and <code>totalinpatientbeds</code> were combined under the column name <code>name</code>, and the corresponding values were under the column name <code>values</code>. Then, I made the dataset tidy by using <code>pivot_wider()</code> and recreating the columns called <code>covidbeds</code> and <code>totalinpatientbeds</code>.</p>
+<pre class="r"><code># making the dataset `icu` untidy
+icu %&gt;% pivot_longer(contains(&quot;icu&quot;), names_to = &quot;name&quot;, values_to = &quot;value&quot;)</code></pre>
+<pre><code>## # A tibble: 3,286 x 4
+##    state date    name         value
+##    &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;        &lt;dbl&gt;
+##  1 CW    9/10/20 icubeds      56942
+##  2 CW    9/10/20 totalicubeds 79693
+##  3 CW    9/11/20 icubeds      56856
+##  4 CW    9/11/20 totalicubeds 79569
+##  5 CW    9/12/20 icubeds      55810
+##  6 CW    9/12/20 totalicubeds 79489
+##  7 CW    9/13/20 icubeds      54133
+##  8 CW    9/13/20 totalicubeds 79389
+##  9 CW    9/14/20 icubeds      54169
+## 10 CW    9/14/20 totalicubeds 79441
+## # … with 3,276 more rows</code></pre>
+<pre class="r"><code># making the dataset `icu` tidy again
+icu %&gt;% pivot_longer(contains(&quot;icu&quot;), names_to = &quot;name&quot;, values_to = &quot;value&quot;) %&gt;% 
+    pivot_wider(names_from = &quot;name&quot;, values_from = &quot;value&quot;)</code></pre>
+<pre><code>## # A tibble: 1,643 x 4
+##    state date    icubeds totalicubeds
+##    &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt;        &lt;dbl&gt;
+##  1 CW    9/10/20   56942        79693
+##  2 CW    9/11/20   56856        79569
+##  3 CW    9/12/20   55810        79489
+##  4 CW    9/13/20   54133        79389
+##  5 CW    9/14/20   54169        79441
+##  6 CW    9/15/20   56345        79903
+##  7 CW    9/16/20   56834        79971
+##  8 CW    9/17/20   57097        80422
+##  9 CW    9/18/20   56972        80515
+## 10 CW    9/19/20   55940        80488
+## # … with 1,633 more rows</code></pre>
+<p>I also made the dataset <code>icu</code> untidy and tidy again to demonstrate my knowledge. The only different thing I did here was that I selected the variables that contain &quot;icu&quot; instead of &quot;beds.&quot;</p>
+</div>
+<div id="joiningmerging-8-pts" class="section level4">
+<h4>2. Joining/Merging (8 pts)</h4>
+<ul>
+<li>Join your datasets into one using a <code>dplyr</code> join function</li>
+<li>If you have multiple observations on the joining variable in either dataset, fix this by collapsing via summarize</li>
+<li>Discuss the process in words, including why you chose the join you did</li>
+<li>Discuss which cases were dropped, if any, and potential problems with this</li>
+</ul>
+<pre class="r"><code># joining the datasets, using the function `inner_join()`
+inner &lt;- inner_join(covid, icu)</code></pre>
+<p>I used the function <code>inner</code> to join my datasets because I did not want to include data that did not have a match on both datasets. Since the function <code>inner</code> keeps the rows that have a match on both datasets and drops any rows that do not intersect. This function makes sure that there are no new NAs in the dataset.</p>
+</div>
+<div id="wrangling-40-pts" class="section level4">
+<h4>3. Wrangling (40 pts)</h4>
+<ul>
+<li>Use all six core <code>dplyr</code> functions in the service of generating summary statistics (18 pts)
+<ul>
+<li>Use mutate at least once to generate a variable that is a function of at least one other variable</li>
+</ul></li>
+<li>Compute at least 10 summary statistics for using summarize and summarize with group_by (18 pts)
+<ul>
+<li>Use at least 5 unique functions inside of summarize (e.g., mean, sd)</li>
+<li>At least 2 of these should group by a categorical variable. Create one by dichotomizing a numeric if necessary</li>
+<li>If applicable, at least 1 of these should group by two categorical variables</li>
+<li>Strongly encouraged to create a correlation matrix with <code>cor()</code> on your numeric variables</li>
+</ul></li>
+<li>Summarize/discuss all results in no more than two paragraphs (4 pts)</li>
+</ul>
+<pre class="r"><code># making sure that there is no NAs in the dataset
+inner &lt;- inner %&gt;% na.omit
+
+# number of distinct values in the dataset
+inner %&gt;% n_distinct()</code></pre>
+<pre><code>## [1] 1643</code></pre>
+<pre class="r"><code># grouping the states by the US Census Bureau Divisions
+inner2 &lt;- inner %&gt;% subset(!state == &quot;CW&quot;) %&gt;% subset(!state == 
+    &quot;PR&quot;)
+
+inner3 &lt;- inner2 %&gt;% separate(date, sep = &quot;/&quot;, into = c(&quot;month&quot;, 
+    &quot;day&quot;, &quot;year&quot;)) %&gt;% mutate(month = recode(month, `9` = &quot;Sep&quot;, 
+    `10` = &quot;Oct&quot;)) %&gt;% select(-day, -year)
+
+inner4 &lt;- inner3 %&gt;% mutate(division = recode(state, CT = &quot;1&quot;, 
+    ME = &quot;1&quot;, MA = &quot;1&quot;, NH = &quot;1&quot;, RI = &quot;1&quot;, VT = &quot;1&quot;, NJ = &quot;2&quot;, 
+    NY = &quot;2&quot;, PA = &quot;2&quot;, IL = &quot;3&quot;, IN = &quot;3&quot;, MI = &quot;3&quot;, OH = &quot;3&quot;, 
+    WI = &quot;3&quot;, IA = &quot;4&quot;, KS = &quot;4&quot;, MN = &quot;4&quot;, MO = &quot;4&quot;, NE = &quot;4&quot;, 
+    ND = &quot;4&quot;, SD = &quot;4&quot;, DE = &quot;5&quot;, FL = &quot;5&quot;, GA = &quot;5&quot;, MD = &quot;5&quot;, 
+    NC = &quot;5&quot;, SC = &quot;5&quot;, VA = &quot;5&quot;, DC = &quot;5&quot;, WV = &quot;5&quot;, AL = &quot;6&quot;, 
+    KY = &quot;6&quot;, MS = &quot;6&quot;, TN = &quot;6&quot;, AR = &quot;7&quot;, LA = &quot;7&quot;, OK = &quot;7&quot;, 
+    TX = &quot;7&quot;, AZ = &quot;8&quot;, CO = &quot;8&quot;, ID = &quot;8&quot;, MT = &quot;8&quot;, NV = &quot;8&quot;, 
+    NM = &quot;8&quot;, UT = &quot;8&quot;, WY = &quot;8&quot;, AK = &quot;9&quot;, CA = &quot;9&quot;, HI = &quot;9&quot;, 
+    OR = &quot;9&quot;, WA = &quot;9&quot;))</code></pre>
+<p>I first checked if there are any NAs in the dataset even after joining them using the <code>inner</code> function. After using <code>na.omit</code>, there were 1643 observations in the dataset. I noticed that the states &quot;CW&quot; and &quot;PR&quot; are not in the US and removed them from the dataset. I named the new dataset as <code>inner2</code>. Then, I used the functions <code>separate</code> and <code>mutate</code> to separate <code>date</code> into <code>month</code>, <code>day</code>, and <code>year</code> and to recode <code>9</code> and <code>10</code> in the variable <code>month</code> to <code>Sep</code> and <code>Oct</code>. This new dataset was named as <code>inner3</code> after I removed <code>day</code> and <code>year</code> from <code>inner2</code>. Finally, I created <code>inner4</code>, which has another column called <code>division</code>. All of the state abbreviations were assigned with division numbers according to the US Census Bureau, using the function <code>mutate</code>.</p>
+<pre class="r"><code># exploring the dataset
+inner2 %&gt;% n_distinct()</code></pre>
+<pre><code>## [1] 1581</code></pre>
+<pre class="r"><code>inner4 %&gt;% summarize(state = n_distinct(state))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   state
+##   &lt;int&gt;
+## 1    51</code></pre>
+<pre class="r"><code>inner2 %&gt;% group_by(state) %&gt;% filter(covidbeds == max(covidbeds)) %&gt;% 
+    arrange(desc(covidbeds))</code></pre>
+<pre><code>## # A tibble: 52 x 6
+## # Groups:   state [51]
+##    state date    covidbeds totalinpatientbeds icubeds totalicubeds
+##    &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;              &lt;dbl&gt;   &lt;dbl&gt;        &lt;dbl&gt;
+##  1 TX    10/6/20      4324              58158    5626         6845
+##  2 FL    9/10/20      4174              78321    4893         6258
+##  3 CA    9/10/20      4029              60783    5195         7196
+##  4 GA    9/10/20      2445              16822    1659         1965
+##  5 IL    10/8/20      2006              28385    2098         3360
+##  6 NY    10/6/20      1977              48056    3089         5148
+##  7 OH    10/8/20      1419              28293    2580         3691
+##  8 NC    10/7/20      1414              21293    1902         2412
+##  9 WI    10/9/20      1386              12361    1026         1597
+## 10 MO    10/7/20      1302              18194    1561         2201
+## # … with 42 more rows</code></pre>
+<pre class="r"><code>inner2 %&gt;% filter(state == &quot;TX&quot;) %&gt;% select(-state) %&gt;% arrange(desc(covidbeds))</code></pre>
+<pre><code>## # A tibble: 31 x 5
+##    date     covidbeds totalinpatientbeds icubeds totalicubeds
+##    &lt;chr&gt;        &lt;dbl&gt;              &lt;dbl&gt;   &lt;dbl&gt;        &lt;dbl&gt;
+##  1 10/6/20       4324              58158    5626         6845
+##  2 10/8/20       4290              60238    5755         6878
+##  3 10/7/20       4264              59227    5685         6978
+##  4 9/10/20       4258              58529    5760         6945
+##  5 10/10/20      4212              61124    5506         7155
+##  6 10/9/20       4202              60720    5578         7181
+##  7 9/11/20       4198              58628    5670         6872
+##  8 9/15/20       4170              57621    5642         6978
+##  9 9/12/20       4152              57725    5563         6942
+## 10 9/22/20       4114              58321    5637         6898
+## # … with 21 more rows</code></pre>
+<pre class="r"><code>inner2 %&gt;% filter(state == &quot;TX&quot;) %&gt;% mutate(covidpercent = covidbeds/totalinpatientbeds * 
+    100) %&gt;% arrange(desc(covidpercent))</code></pre>
+<pre><code>## # A tibble: 31 x 7
+##    state date    covidbeds totalinpatientbeds icubeds totalicubeds covidpercent
+##    &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;              &lt;dbl&gt;   &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;
+##  1 TX    10/6/20      4324              58158    5626         6845         7.43
+##  2 TX    9/10/20      4258              58529    5760         6945         7.28
+##  3 TX    9/15/20      4170              57621    5642         6978         7.24
+##  4 TX    10/7/20      4264              59227    5685         6978         7.20
+##  5 TX    9/13/20      4093              56900    5443         6847         7.19
+##  6 TX    9/12/20      4152              57725    5563         6942         7.19
+##  7 TX    9/14/20      4092              57042    5516         6935         7.17
+##  8 TX    9/21/20      4056              56593    5564         6930         7.17
+##  9 TX    9/11/20      4198              58628    5670         6872         7.16
+## 10 TX    10/5/20      4032              56425    5437         6782         7.15
+## # … with 21 more rows</code></pre>
+<pre class="r"><code>inner4 %&gt;% group_by(state, month) %&gt;% arrange(icubeds)</code></pre>
+<pre><code>## # A tibble: 1,581 x 7
+## # Groups:   state, month [102]
+##    state month covidbeds totalinpatientbeds icubeds totalicubeds division
+##    &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt;              &lt;dbl&gt;   &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;   
+##  1 WY    Sep          30               1525      33          119 8       
+##  2 WY    Sep          35               1512      35          116 8       
+##  3 VT    Sep           4                697      36           63 1       
+##  4 WY    Sep          28               1516      36          116 8       
+##  5 WY    Sep          41               1506      36          116 8       
+##  6 WY    Sep          32               1525      38          119 8       
+##  7 WY    Sep          45               1512      38          116 8       
+##  8 WY    Sep          43               1512      40          116 8       
+##  9 WY    Sep          45               1512      40          116 8       
+## 10 WY    Oct          47               1511      40          116 8       
+## # … with 1,571 more rows</code></pre>
+<pre class="r"><code>inner2 %&gt;% filter(covidbeds == min(covidbeds))</code></pre>
+<pre><code>## # A tibble: 3 x 6
+##   state date     covidbeds totalinpatientbeds icubeds totalicubeds
+##   &lt;chr&gt; &lt;chr&gt;        &lt;dbl&gt;              &lt;dbl&gt;   &lt;dbl&gt;        &lt;dbl&gt;
+## 1 VT    10/2/20          0               1177      72          103
+## 2 VT    10/9/20          0               1160      70          102
+## 3 VT    10/10/20         0               1182      69          104</code></pre>
+<pre class="r"><code>inner2 %&gt;% mutate(covidpercent = covidbeds/totalinpatientbeds * 
+    100) %&gt;% filter(covidpercent == max(covidpercent))</code></pre>
+<pre><code>## # A tibble: 1 x 7
+##   state date    covidbeds totalinpatientbeds icubeds totalicubeds covidpercent
+##   &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;              &lt;dbl&gt;   &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;
+## 1 SD    10/7/20       280               1714     116          154         16.3</code></pre>
+<pre class="r"><code>inner4 %&gt;% group_by(division) %&gt;% summarize(meancovidbeds = mean(covidbeds))</code></pre>
+<pre><code>## # A tibble: 9 x 2
+##   division meancovidbeds
+##   &lt;chr&gt;            &lt;dbl&gt;
+## 1 1                 117.
+## 2 2                1090.
+## 3 3                1070.
+## 4 4                 418.
+## 5 5                1004.
+## 6 6                 844.
+## 7 7                1472.
+## 8 8                 257.
+## 9 9                 847.</code></pre>
+<pre class="r"><code>inner4 %&gt;% group_by(division) %&gt;% summarize(mediancovidbeds = median(covidbeds))</code></pre>
+<pre><code>## # A tibble: 9 x 2
+##   division mediancovidbeds
+##   &lt;chr&gt;              &lt;dbl&gt;
+## 1 1                    62 
+## 2 2                  1004 
+## 3 3                   972 
+## 4 4                   331 
+## 5 5                   737 
+## 6 6                   900 
+## 7 7                   630 
+## 8 8                   192.
+## 9 9                   221</code></pre>
+<pre class="r"><code># mean, sd, n, se
+inner4 %&gt;% group_by(division) %&gt;% summarize(mean = mean(covidbeds, 
+    na.rm = T), sd = sd(covidbeds, na.rm = T), n = n(), se = sd/sqrt(n))</code></pre>
+<pre><code>## # A tibble: 9 x 5
+##   division  mean    sd     n     se
+##   &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt;
+## 1 1         117.  120.   186   8.79
+## 2 2        1090.  447.    93  46.3 
+## 3 3        1070.  411.   155  33.0 
+## 4 4         418.  298.   217  20.2 
+## 5 5        1004.  897.   279  53.7 
+## 6 6         844.  168.   124  15.1 
+## 7 7        1472. 1504.   124 135.  
+## 8 8         257.  177.   248  11.2 
+## 9 9         847. 1289.   155 104.</code></pre>
+<pre class="r"><code>inner4 %&gt;% group_by(division, month) %&gt;% summarize(mean = mean(covidbeds, 
+    na.rm = T), sd = sd(covidbeds, na.rm = T), n = n(), se = sd/sqrt(n))</code></pre>
+<pre><code>## # A tibble: 18 x 6
+## # Groups:   division [9]
+##    division month  mean    sd     n     se
+##    &lt;chr&gt;    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt;
+##  1 1        Oct    137.  144.    60  18.6 
+##  2 1        Sep    107.  106.   126   9.42
+##  3 2        Oct   1186.  524.    30  95.6 
+##  4 2        Sep   1044.  401.    63  50.6 
+##  5 3        Oct   1244.  371.    50  52.5 
+##  6 3        Sep    988.  405.   105  39.5 
+##  7 4        Oct    489.  315.    70  37.6 
+##  8 4        Sep    385.  284.   147  23.4 
+##  9 5        Oct    943.  760.    90  80.1 
+## 10 5        Sep   1033.  955.   189  69.5 
+## 11 6        Oct    877.  165.    40  26.0 
+## 12 6        Sep    828.  168.    84  18.4 
+## 13 7        Oct   1506. 1514.    40 239.  
+## 14 7        Sep   1456. 1508.    84 164.  
+## 15 8        Oct    297.  186.    80  20.8 
+## 16 8        Sep    238.  169.   168  13.0 
+## 17 9        Oct    796. 1200.    50 170.  
+## 18 9        Sep    871. 1335.   105 130.</code></pre>
+<pre class="r"><code>inner4 %&gt;% summarize(mean = mean(covidbeds, na.rm = T), sd = sd(covidbeds, 
+    na.rm = T), n = n(), se = sd/sqrt(n))</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##    mean    sd     n    se
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;
+## 1  722.  836.  1581  21.0</code></pre>
+<pre class="r"><code>inner4 %&gt;% group_by(state) %&gt;% summarize(mean = mean(covidbeds, 
+    na.rm = T), sd = sd(covidbeds, na.rm = T), n = n(), se = sd/sqrt(n))</code></pre>
+<pre><code>## # A tibble: 51 x 5
+##    state   mean     sd     n     se
+##    &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt;
+##  1 AK      48.8   6.24    31   1.12
+##  2 AL     921.   28.6     31   5.14
+##  3 AR     558.   66.8     31  12.0 
+##  4 AZ     568.   70.1     31  12.6 
+##  5 CA    3397.  255.      31  45.8 
+##  6 CO     317.   50.4     31   9.06
+##  7 CT     204.   42.2     31   7.58
+##  8 DC     147.   11.0     31   1.98
+##  9 DE     112.   25.2     31   4.53
+## 10 FL    2813.  570.      31 102.  
+## # … with 41 more rows</code></pre>
+<pre class="r"><code>inner4 %&gt;% group_by(state) %&gt;% summarize(mean = mean(totalinpatientbeds), 
+    sd = sd(totalinpatientbeds), n = n(), se = sd/sqrt(n))</code></pre>
+<pre><code>## # A tibble: 51 x 5
+##    state   mean     sd     n     se
+##    &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt;
+##  1 AK     1516.  145.     31  26.1 
+##  2 AL    14108.   62.0    31  11.1 
+##  3 AR     7794.   65.3    31  11.7 
+##  4 AZ    11369.  397.     31  71.4 
+##  5 CA    60960.  404.     31  72.5 
+##  6 CO     9732.   34.9    31   6.26
+##  7 CT     8097.   21.8    31   3.92
+##  8 DC     2853.   40.6    31   7.30
+##  9 DE     2280.   92.4    31  16.6 
+## 10 FL    76092. 1399.     31 251.  
+## # … with 41 more rows</code></pre>
+<pre class="r"><code>inner4 %&gt;% summarize(mean = mean(totalinpatientbeds, na.rm = T), 
+    sd = sd(totalinpatientbeds, na.rm = T), n = n(), se = sd/sqrt(n))</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##     mean     sd     n    se
+##    &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;
+## 1 13898. 15627.  1581  393.</code></pre>
+<pre class="r"><code>inner4 %&gt;% summarize(mean = mean(icubeds, na.rm = T), sd = sd(icubeds, 
+    na.rm = T), n = n(), se = sd/sqrt(n))</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##    mean    sd     n    se
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;
+## 1 1107. 1228.  1581  30.9</code></pre>
+<pre class="r"><code>inner4 %&gt;% group_by(state) %&gt;% summarize(mean = mean(icubeds, 
+    na.rm = T), sd = sd(icubeds, na.rm = T), n = n(), se = sd/sqrt(n))</code></pre>
+<pre><code>## # A tibble: 51 x 5
+##    state   mean    sd     n    se
+##    &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;
+##  1 AK      81.5  13.3    31  2.39
+##  2 AL    1243.   27.5    31  4.94
+##  3 AR     739.   21.8    31  3.91
+##  4 AZ     804.   36.8    31  6.61
+##  5 CA    4922.  119.     31 21.4 
+##  6 CO     778.   37.7    31  6.77
+##  7 CT     516.   18.9    31  3.40
+##  8 DC     250.   12.0    31  2.15
+##  9 DE     122.   12.5    31  2.25
+## 10 FL    4721.  113.     31 20.2 
+## # … with 41 more rows</code></pre>
+<pre class="r"><code>inner4 %&gt;% summarize(mean = mean(totalicubeds, na.rm = T), sd = sd(totalicubeds, 
+    na.rm = T), n = n(), se = sd/sqrt(n))</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##    mean    sd     n    se
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;
+## 1 1570. 1677.  1581  42.2</code></pre>
+<pre class="r"><code>inner4 %&gt;% group_by(state) %&gt;% summarize(mean = mean(totalicubeds, 
+    na.rm = T), sd = sd(totalicubeds, na.rm = T), n = n(), se = sd/sqrt(n))</code></pre>
+<pre><code>## # A tibble: 51 x 5
+##    state  mean    sd     n     se
+##    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt;
+##  1 AK     108. 29.7     31  5.34 
+##  2 AL    1477. 19.0     31  3.41 
+##  3 AR     950.  8.14    31  1.46 
+##  4 AZ    1414. 59.0     31 10.6  
+##  5 CA    7132. 37.8     31  6.79 
+##  6 CO    1208. 13.1     31  2.36 
+##  7 CT    1047.  1.66    31  0.297
+##  8 DC     350. 11.5     31  2.06 
+##  9 DE     154.  9.76    31  1.75 
+## 10 FL    6241. 31.8     31  5.71 
+## # … with 41 more rows</code></pre>
+<pre class="r"><code># quantiles
+inner4 %&gt;% select(covidbeds) %&gt;% summarize(quants = quantile(covidbeds, 
+    na.rm = T))</code></pre>
+<pre><code>## # A tibble: 5 x 1
+##   quants
+##    &lt;dbl&gt;
+## 1      0
+## 2    181
+## 3    500
+## 4    928
+## 5   4324</code></pre>
+<pre class="r"><code>inner4 %&gt;% select(totalinpatientbeds) %&gt;% summarize(quants = quantile(totalinpatientbeds, 
+    na.rm = T))</code></pre>
+<pre><code>## # A tibble: 5 x 1
+##   quants
+##    &lt;dbl&gt;
+## 1    697
+## 2   3219
+## 3   9380
+## 4  16413
+## 5  79418</code></pre>
+<pre class="r"><code>inner4 %&gt;% select(icubeds) %&gt;% summarize(quants = quantile(icubeds, 
+    na.rm = T))</code></pre>
+<pre><code>## # A tibble: 5 x 1
+##   quants
+##    &lt;dbl&gt;
+## 1     33
+## 2    261
+## 3    761
+## 4   1400
+## 5   5903</code></pre>
+<pre class="r"><code>inner4 %&gt;% select(totalicubeds) %&gt;% summarize(quants = quantile(totalicubeds, 
+    na.rm = T))</code></pre>
+<pre><code>## # A tibble: 5 x 1
+##   quants
+##    &lt;dbl&gt;
+## 1     46
+## 2    355
+## 3   1047
+## 4   2089
+## 5   7291</code></pre>
+<pre class="r"><code># correlations
+inner %&gt;% select(covidbeds, totalinpatientbeds, icubeds, totalicubeds) %&gt;% 
+    cor %&gt;% round(3)</code></pre>
+<pre><code>##                    covidbeds totalinpatientbeds icubeds totalicubeds
+## covidbeds              1.000              0.996   0.998        0.997
+## totalinpatientbeds     0.996              1.000   0.999        0.999
+## icubeds                0.998              0.999   1.000        0.999
+## totalicubeds           0.997              0.999   0.999        1.000</code></pre>
+<p>The total number of observations of <code>inner2</code> was 1581 observations, and the total number of states of <code>inner4</code> was 51. I found out that the state of Texas has the highest number of <code>covidbeds</code> and that Texas had the highest number of <code>covidbeds</code> on October 6th 2020. I also calculated the percentage of beds occupied by COVID patients. On October 6th, 2020, the percentage was 7.43%. I also learned that Wyoming had the lowest number of ICU beds occupied in September and that the state of Vermont had the lowest number of covidbeds, 0, for 3 days. The highest percent of beds occupied by COVID patient was 16.34% in South Dakota on October 7th, 2020. I also calculated the mean and median numbers of COVID beds occupied of each division. Whilte Division 7 had the highest average, Division 2 had the highest median. I computed the mean, standard deviation, number, and standard error of each division. When I just grouped the dataset by <code>division</code>, I got the overall values of each division. However, when I grouped the dataset by <code>division</code> and <code>month</code>, I got the values separated by month also. For example, the overall mean of <code>covidbeds</code> of Division 1 was 116.56, the mean in September was 106.85, and the mean in October was 136.97. If I do not group by anything, I get an average, standard deviation, number, and standard error of the entire dataset, which are 722.27, 836.02, 1581, 21.03, respectively. I also grouped the dataset by <code>state</code> and learned that Arkansas had a mean of 48.77 beds, standard deviation of 6.24, 31 observations, and standard error of 1.12. When grouped by <code>state</code>, the mean of <code>totalinpatientbeds</code> of Alabama was 1516.26, the standard deviation was 145.15, and the standard error was 11.13. The overall mean of <code>totalinpatientbeds</code> was 13897.92, the standard deviation was 15626.93, and the standard error was 393.0138. The overall mean of ICU beds was 1106.88, the standard deviation was 1228.08, and the standard error was 30.89. When the dataset was grouped by <code>state</code>, the state of California had the mean of 4921.84 ICU beds, the standard deviation of 118.90, and the standard error of 21.35. Finally, the overall mean of total ICU beds was 1570.12, the standard deviation was 1677.39, and the standard error was 42.19. Grouped by <code>state</code>, Washington, D.C. had the mean of 350.26 total ICU beds, the standard deviation of 11.49, and the standard error of 2.06.</p>
+<p>I also calculated the 0th, 25th, 50th, 75th, and 100th quantiles of each numerical variable. The minimum number of <code>covidbeds</code> was 0 while the maximum number was 4324. The 25th percentile of <code>covidbeds</code> was 181, the 50th was 500, and the 75th was 928. The percentile values of <code>totalinpatientbeds</code> were 697, 3219, 9380, 16413, and 79418. Those of <code>icubeds</code> were 33, 261, 761, 1400, and 5903. Finally, those of <code>totalicubeds</code> were 697, 3219, 9380, 16413, and 79418. I also computed the correlations among the numerical variables. The highest correlation value was 0.999 which was between <code>totalinpatientbeds</code> and <code>icubeds</code> as well as <code>totalinpatientbeds</code> and <code>totalicubeds</code>.</p>
+</div>
+<div id="visualizing-30-pts" class="section level4">
+<h4>4. Visualizing (30 pts)</h4>
+<ul>
+<li><p>Create a correlation heatmap of your numeric variables</p></li>
+<li><p>Create two effective, polished plots with ggplot</p>
+<ul>
+<li>Each plot should map 3+ variables to aesthetics</li>
+<li>Each plot should have a title and clean labeling for all mappings</li>
+<li>Change at least one default theme element and color for at least one mapping per plot</li>
+<li>For at least one plot, add more tick marks (x, y, or both) than are given by default</li>
+<li>For at least one plot, use the stat=&quot;summary&quot; function</li>
+<li>Supporting paragraph or two (for each plot) describing the relationships/trends that are apparent</li>
+</ul></li>
+</ul>
+<pre class="r"><code>library(ggplot2)
+
+# HEATMAP
+cormat &lt;- inner4 %&gt;% select_if(is.numeric) %&gt;% cor(use = &quot;pair&quot;)
+
+tidycor &lt;- cormat %&gt;% as.data.frame %&gt;% rownames_to_column(&quot;var1&quot;) %&gt;% 
+    pivot_longer(-1, names_to = &quot;var2&quot;, values_to = &quot;correlation&quot;)
+tidycor</code></pre>
+<pre><code>## # A tibble: 16 x 3
+##    var1               var2               correlation
+##    &lt;chr&gt;              &lt;chr&gt;                    &lt;dbl&gt;
+##  1 covidbeds          covidbeds                1    
+##  2 covidbeds          totalinpatientbeds       0.903
+##  3 covidbeds          icubeds                  0.942
+##  4 covidbeds          totalicubeds             0.924
+##  5 totalinpatientbeds covidbeds                0.903
+##  6 totalinpatientbeds totalinpatientbeds       1    
+##  7 totalinpatientbeds icubeds                  0.968
+##  8 totalinpatientbeds totalicubeds             0.976
+##  9 icubeds            covidbeds                0.942
+## 10 icubeds            totalinpatientbeds       0.968
+## 11 icubeds            icubeds                  1    
+## 12 icubeds            totalicubeds             0.987
+## 13 totalicubeds       covidbeds                0.924
+## 14 totalicubeds       totalinpatientbeds       0.976
+## 15 totalicubeds       icubeds                  0.987
+## 16 totalicubeds       totalicubeds             1</code></pre>
+<pre class="r"><code>tidycor %&gt;% ggplot(aes(var1, var2, fill = correlation)) + geom_tile() + 
+    geom_text(aes(label = round(correlation, 2))) + xlab(&quot;&quot;) + 
+    ylab(&quot;&quot;) + coord_fixed() + scale_fill_gradientn(colors = c(&quot;lavenderblush1&quot;, 
+    &quot;mistyrose&quot;, &quot;aliceblue&quot;, &quot;powderblue&quot;), breaks = c(0, 25, 
+    50, 75, Inf)) + theme(axis.text.x = element_text(angle = 45, 
+    hjust = 1)) + coord_fixed() + ggtitle(&quot;Heatmap of Numeric Variables&quot;) + 
+    ylab(&quot;Numeric Variables&quot;) + xlab(&quot;Numeric Variables&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This heatmap presents the correlations among my numerical variables: <code>covidbeds</code>, <code>totalinpatientbeds</code>, <code>icubeds</code>, <code>totalicubeds</code>. I first selected variables that are only numeric and found correlations among them. Then, I made them tidy, using <code>as.data.frame</code>, <code>rownames_to_column</code>, and <code>pivot_longer(-1)</code>. After that, I used <code>ggplot()</code>, <code>geom_tile()</code>, <code>geom_text()</code> to create the heatmap. I assigned colors to the ranges of colors to visualize the heatmap more effectively, using <code>scale_fill_gradientn()</code>. I rotated the variables on the x-axis by 45 degrees to prevent the texts from overlapping with one another. I also added a title, labels for x and y axes.</p>
+<p>This heatmap shows that all of the variables have strong positive correlations. Excluding the correlation value of 1, the highest correlation is 0.99 which is between the number of ICU beds and total ICU beds. The lowest correlation value is 0.9, and it is between the number of COVID patients and total patient beds.</p>
+<pre class="r"><code># GRAPH2
+inner4 %&gt;% group_by(division, month) %&gt;% summarize(mean = mean(covidbeds, 
+    na.rm = T), sd = sd(covidbeds, na.rm = T), n = n(), se = sd/sqrt(n)) %&gt;% 
+    ggplot(aes(division, mean, fill = month)) + scale_fill_hue(c = 45, 
+    l = 80) + geom_bar(stat = &quot;summary&quot;) + facet_wrap(~month) + 
+    geom_errorbar(aes(y = mean, ymin = mean - se, ymax = mean + 
+        se, width = 0.5)) + ggtitle(&quot;Average Number of Admitted COVID Patients by Divisions and Months&quot;) + 
+    ylab(&quot;Number of Admitted Patients&quot;) + xlab(&quot;Division&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This graph displays the average numbers of admitted COVID patients by divisions and months. I first grouped the dataset by divisions and months and used the <code>summarize</code> function to calculate the mean, standard deviation, number, and standard error of <code>covidbeds</code> by each division and month. I then made a bar graph chart using <code>ggplot()</code> by divisions and faceted by months. I also adjusted the colors of the bars. I included the +/- 1 standard error bars using <code>geom_errorbar</code> and adjusted the width to 0.5. Finally, I added a title and labels of x and y axes.</p>
+<p>This barchart shows us that Division 1 has the lowest number of patients admitted due to COVID-19 whilie Division 7 has the highest number of patients for both September and October. Texas is one of the Division 7 states. Since Texas had the highest numbers of COVID patients admitted out of all the states, the overall average number of COVID-19 patients in Division 7 was the highest. The barcharts of September and October are pretty similar. However, overall, the numbers of patients increased in October in most of the divisions except Division 9.</p>
+<pre class="r"><code># GRAPH3
+inner4 %&gt;% group_by(state) %&gt;% filter(covidbeds == max(covidbeds)) %&gt;% 
+    ggplot(aes(covidbeds, icubeds, color = division)) + geom_point(size = 4) + 
+    scale_color_brewer(palette = &quot;Paired&quot;) + scale_x_continuous(breaks = seq(0, 
+    4500, 500)) + theme(axis.text.x = element_text(angle = 45, 
+    hjust = 1)) + scale_y_continuous(breaks = seq(0, 6000, 500)) + 
+    ggtitle(&quot;COVID Beds vs. ICU Beds&quot;) + xlab(&quot;Highest Number of Beds Occupied by COVID-19 Patients&quot;) + 
+    ylab(&quot;Number of ICU Beds Occupied&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>For this graph, I plotted the relationship between the highest number of COVID-19 patient beds and ICU beds. I first grouped the dataset <code>inner4</code> by states then filtered it by the highest number of COVID patients admitted of each state. Then, I plotted the highest number of COVID patients against the number of ICU beds using <code>ggplot()</code> and <code>geom_point()</code>. I adjusted the size and colors of the points as well. I also added manual tick marks that range from 0 to 4,500 that increase by 500 on the x-axis and from 0 to 6,000 that also increase by 500 on the y-axis. I added a title as well as labels for the x- and y-axes.</p>
+<p>Because those two variables have a strong positive relationship, the points are lined up pretty well going from the lower left side to the upper right side of the graph. The yellow dot on the upper right side is Texas because Texas had the highest number of COVID patients admitted to hospitals. The state of Vermont, which is in Division 1, has the lowest number of COVID beds occupied. This graph clearly displays that the average of COVID patients of Division 7 as shown in the second graph was the highest because of Texas.</p>
+</div>
+<div id="dimensionality-reduction-20-pts" class="section level4">
+<h4>5. Dimensionality Reduction (20 pts)</h4>
+<ul>
+<li><p>Either k-means/PAM clustering or PCA (inclusive &quot;or&quot;) should be performed on at least three numeric variables in your dataset</p>
+<ul>
+<li>All relevant steps discussed in class</li>
+<li>A visualization of the clusters or the first few principal components (using ggplot2)</li>
+<li>Supporting paragraph or two describing results found</li>
+</ul></li>
+</ul>
+<pre class="r"><code>library(cluster)
+
+sil_width &lt;- vector()
+
+inner5 &lt;- inner4 %&gt;% select(-1, -2)
+
+for (i in 2:10) {
+    kms &lt;- kmeans(inner5, centers = i)
+    sil &lt;- silhouette(kms$cluster, dist(inner5))
+    sil_width[i] &lt;- mean(sil[, 3])
+}
+
+ggplot() + geom_line(aes(x = 1:10, y = sil_width)) + scale_x_continuous(name = &quot;k&quot;, 
+    breaks = 1:10)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pam &lt;- inner5 %&gt;% pam(k = 2)
+pam</code></pre>
+<pre><code>## Medoids:
+##       ID covidbeds totalinpatientbeds icubeds totalicubeds division
+## [1,] 203       292               8101     526         1046        1
+## [2,]  52      3691              60260    4871         7115        9
+## Clustering vector:
+##   [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 1
+##  [38] 1 1 2 1 1 1 1 1 2 1 1 1 1 1 2 1 1 1 1 1 2 1 1 1 1 1 2 1 1 1 1 1 2 1 1 1 1
+##  [75] 1 2 1 1 1 1 1 2 1 1 1 1 1 2 1 1 1 1 1 2 1 1 1 1 1 2
+##  [ reached getOption(&quot;max.print&quot;) -- omitted 1481 entries ]
+## Objective function:
+##    build     swap 
+## 6170.353 6155.816 
+## 
+## Available components:
+##  [1] &quot;medoids&quot;    &quot;id.med&quot;     &quot;clustering&quot; &quot;objective&quot;  &quot;isolation&quot; 
+##  [6] &quot;clusinfo&quot;   &quot;silinfo&quot;    &quot;diss&quot;       &quot;call&quot;       &quot;data&quot;</code></pre>
+<pre class="r"><code>plot(pam, which = 2)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pamclust &lt;- inner5 %&gt;% mutate(cluster = as.factor(pam$clustering))
+pamclust %&gt;% ggplot(aes(covidbeds, icubeds, color = cluster)) + 
+    geom_point() + ggtitle(&quot;Number of COVID Beds vs. Number of ICU Beds&quot;) + 
+    xlab(&quot;Number of COVID Beds Occupied&quot;) + ylab(&quot;Number of ICU Beds Occupied&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-10-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pamclust %&gt;% group_by(cluster) %&gt;% summarize_if(is.numeric, mean, 
+    na.rm = T)</code></pre>
+<pre><code>## # A tibble: 2 x 5
+##   cluster covidbeds totalinpatientbeds icubeds totalicubeds
+##   &lt;fct&gt;       &lt;dbl&gt;              &lt;dbl&gt;   &lt;dbl&gt;        &lt;dbl&gt;
+## 1 1            530.              9927.    813.        1164.
+## 2 2           2982.             60556.   4562.        6339.</code></pre>
+<pre class="r"><code>inner5 %&gt;% slice(pam$id.med)</code></pre>
+<pre><code>## # A tibble: 2 x 5
+##   covidbeds totalinpatientbeds icubeds totalicubeds division
+##       &lt;dbl&gt;              &lt;dbl&gt;   &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;   
+## 1       292               8101     526         1046 1       
+## 2      3691              60260    4871         7115 9</code></pre>
+<pre class="r"><code># comparison to the actual plot
+inner4 %&gt;% ggplot(aes(covidbeds, icubeds, color = covidbeds)) + 
+    geom_point()</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-10-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>I clustered my dataset using the k-means clustering and partioning around medoids (PAM). I first loaded the cluster package and created an empty vector that holds the average silhouette width. I created a new dataset called <code>inner5</code> by removing the catergorical variables which are on columns 1 and 2. I computed k-means and silhouette widths, and I took the averages of the silhouette widths. After the steps were repeated to stabilize the result, I graphed the goodness-of-fit. Because the silhouette width was the highest when k is 2, I concluded that 2 clusters are in PAM.</p>
+<p>I then assigned <code>pam</code> with k=2 and plotted pam in order to interpret the average silhouette width. The two clusters had high average silhouette widths, meaning that there is a strong structure. The average silhouette width is 0.82. Then, I created a data called <code>pamclust</code> to visualize the two clusters. There are clear distinctions in clusters in the lower left and the upper right. I am surprised to see that the computation decided to divide the points clusted in the middle into two different clusters. Finally, I plotted a scatterplot of inner4 to compare it with the PAM plot. There are clear color distinctions in the lower left and the upper right. There is not a clear distinction in the middle, but I can see some color differences that might infer the result of the PAM clustering.</p>
+</div>
+<div id="neatness" class="section level4">
+<h4>6. Neatness!</h4>
+<ul>
+<li>Your project should not knit to more than 30 or so pages (probably closer to 10)! You will lose points if you print out your entire dataset(s), have terrible formatting, etc. If you start your project in a fresh .Rmd file, you are advised to paste the set-up code from this document (lines 14-17) at the top of it: this will automatically truncate if you accidentally print out a huge dataset, etc. Imagine this is a polished report you are giving to your PI or boss to summarize your work researching a topic.</li>
+</ul>
+<p>...</p>
+</div>
+</div>
+</div>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

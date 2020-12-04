@@ -1,0 +1,35 @@
+---
+title: Test Post
+author: ''
+date: '2020-12-04'
+slug: test-post
+categories: []
+tags: []
+description: ''
+---
+
+<center>
+![](/post/2020-12-04-test-post_files/Ranger 8.jpg){width=50%} </center>
+
+This is my cat! ^._.^
+
+# Heading of my post!
+
+Content of my post!
+
+## Subheading
+
+More content
+
+```{r}
+hist(quakes$mag)
+quakes <- quakes
+```
+
+```{python}
+import re
+match=re.match(r"\d+", "SDS348")
+
+r.quakes.mag.mean()
+```
+
