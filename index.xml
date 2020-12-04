@@ -13,10 +13,10 @@
       <pubDate>Fri, 04 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>/post/2020/12/04/test-post/</guid>
-      <description>    This is my cat! ^._.^
+      <description>This is my cat! =^._.^=
 Heading of my post! Content of my post!
 Subheading More content
-hist(quakes$mag) quakes &amp;lt;- quakes import re match=re.match(r&amp;quot;\d+&amp;quot;, &amp;quot;SDS348&amp;quot;) r.quakes.mag.mean() ## 4.6204000000000001   </description>
+hist(quakes$mag) quakes &amp;lt;- quakes import re match=re.match(r&amp;quot;\d+&amp;quot;, &amp;quot;SDS348&amp;quot;) r.quakes.mag.mean() ## 4.6204000000000001   How to Upload to GitHub ek8435@educcomp04:~/website$ cd /website/public ek8435@educcomp04:/website/public$ pwd /stor/home/ek8435/website/public ek8435@educcomp04:~/website/public$ git init Initialized empty Git repository in /stor/home/ek8435/website/public/.git/ ek8435@educcomp04:~/website/public$ git add . ek8435@educcomp04:~/website/public$ git commit -m &amp;quot;test site&amp;quot; ek8435@educcomp04:~/website/public$ git remote add origin https://github.com/estherewing/estherewing.github.io.git ek8435@educcomp04:~/website/public$ git push origin master</description>
     </item>
     
     <item>

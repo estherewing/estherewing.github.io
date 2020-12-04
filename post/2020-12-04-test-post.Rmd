@@ -11,7 +11,7 @@ description: ''
 <center>
 ![](/post/2020-12-04-test-post_files/Ranger 8.jpg){width=50%} </center>
 
-This is my cat! ^._.^
+This is my cat! =^._.^= 
 
 # Heading of my post!
 
@@ -33,3 +33,13 @@ match=re.match(r"\d+", "SDS348")
 r.quakes.mag.mean()
 ```
 
+# How to Upload to GitHub
+ek8435@educcomp04:~/website$ cd ~/website/public
+ek8435@educcomp04:~/website/public$ pwd
+/stor/home/ek8435/website/public
+ek8435@educcomp04:~/website/public$ git init
+Initialized empty Git repository in /stor/home/ek8435/website/public/.git/
+ek8435@educcomp04:~/website/public$ git add .
+ek8435@educcomp04:~/website/public$ git commit -m "test site"
+ek8435@educcomp04:~/website/public$ git remote add origin https://github.com/estherewing/estherewing.github.io.git
+ek8435@educcomp04:~/website/public$ git push origin master
