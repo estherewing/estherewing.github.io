@@ -1,0 +1,52 @@
+---
+title: Using Reticulate
+author: "Esther Kim"
+date: 2020-12-06
+categories: ["R", "Python"]
+tags: ["R", "Python", "reticulate"]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+#Reticulate
+Whenever you need R and Python to work together and share information, you can use reticulate. 
+
+This is fairly easy!
+
+When you insert a chunck (shortcut: Ctrl+Alt+I OR Command+Option+I), you will see `{r}`. That means that that chunk will be using R. You can change `{r}` to `{python}` to simply switch the chunk to a Python code chunk. 
+
+First, you need to run `library(reticulate)` in the R code chunk to make R and Python communicate with each other!
+
+```{r}
+library(reticulate)
+```
+
+Then, you can run anything using R. For example, you can do this:
+
+```{r}
+#this is an R code chunk
+fromR <- "this is from R"
+```
+
+You can have a Python code chunk to print `fromR` by putting `r.` in front of it. 
+```{python}
+#this is a Python code chunk
+print(r.fromR)
+```
+
+You can do this vice versa!
+```{python}
+#this is a Python code chunk
+fromPython = "this is from Python"
+```
+
+Instead of `r.`, use `py$` in an R chunk to bring something from the Python chunk. 
+```{r}
+#this is an R chunk
+py$fromPython
+```
+
+Isn't this pretty cool?! You can do a lot more things using reticulate. I will post some more examples in the future!
+

@@ -1,0 +1,76 @@
+---
+title: Regular Expressions Basics
+author: ''
+date: '2020-12-10'
+slug: test-post
+categories: ["Python"]
+tags: ["python", "regular expressions", "regex"]
+description: ''
+---
+
+<center>
+![](/post/2020-12-10-regex_files/codingcat.gif)
+
+Coding can be difficult, but you are not alone!
+</center>
+
+
+# Regular Expressions
+A regular expression, also known as regex, is a part of Python that is useful for finding matches of specific search patterns. 
+
+## Regex Symbols
+
+These symbols below are used to match any or specific characters! It may seem like it is a lot, but don't worry! The more you practice, the easier it gets.
+
+<center>
+![](/post/2020-12-10-regex_files/regexsymbols.png){width=50%}
+
+Regex Symbols 
+(from Dr. Woodward's F20 SDS348_Regex1 slides)
+</center>
+
+
+This might be confusing if this is your first time learning regex. Let's look at some examples with these symbols to help you understand regex better!
+
+
+##Regex Examples
+
+###Using re.findall(r"expression", string)
+re.findall(r"expression", string) is used to find all matches of a pattern.
+
+Let's say that we have a string, `I love my cat!` and that we want to match every alphanumeric character.
+
+Since we only want alphanumeric characters, we will use `\w`, which will match every alphanumeric character. Note that we will get a list of single characters because we did not use `+` or `*` to match more characters.
+
+```{python}
+import re
+
+string="I love my cat!"
+re.findall(r"\w", string)
+```
+
+But now, let's put `+` after `\w`. This will match any alphanumeric character occurring one or more times!
+
+```{python}
+import re
+
+string="I love my cat!"
+re.findall(r"\w+", string)
+```
+
+
+Now, it's your turn! 
+Write a Python program that matches all numbers from the string, `Louis is a yellow tabby cat. He will turn 6 in May 2021. He is pretty chubby because he loves to eat. He weighs about 17 pounds. He gets fed 3 times a day. Occasionally, he would get about 5 pieces of treats. He sleeps about 14 hours a day.` You can do this in many different ways, but use `\d` for this example!
+
+
+Answer:
+```{python}
+import re
+
+string="Louis is a yellow tabby cat. He will turn 6 in May 2021. He is pretty chubby because he loves to eat. He weighs about 17 pounds. He gets fed 3 times a day. Occasionally, he would get about 5 pieces of treats. He sleeps about 14 hours a day."
+
+re.findall(r"\d+", string)
+```
+
+I hope you have a better understanding of regex and how to use `re.findall()` to find anything you want! I will write more blog posts to teach you more about regex. Stay tuned!
+

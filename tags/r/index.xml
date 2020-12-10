@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>R on My Website</title>
+    <link>/tags/r/</link>
+    <description>Recent content in R on My Website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sun, 06 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/r/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Using Reticulate</title>
+      <link>/post/2020/12/06/using-reticulate/</link>
+      <pubDate>Sun, 06 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/06/using-reticulate/</guid>
+      <description>Reticulate Whenever you need R and Python to work together and share information, you can use reticulate.
+This is fairly easy!
+When you insert a chunck (shortcut: Ctrl+Alt+I OR Command+Option+I), you will see {r}. That means that that chunk will be using R. You can change {r} to {python} to simply switch the chunk to a Python code chunk.
+First, you need to run library(reticulate) in the R code chunk to make R and Python communicate with each other!</description>
+    </item>
+    
+  </channel>
+</rss>

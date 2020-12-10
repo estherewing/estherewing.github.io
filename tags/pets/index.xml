@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>pets on My Website</title>
+    <link>/tags/pets/</link>
+    <description>Recent content in pets on My Website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Fri, 04 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/pets/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Meet My Cat</title>
+      <link>/post/2020/12/04/test-post/</link>
+      <pubDate>Fri, 04 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/04/test-post/</guid>
+      <description>Meet Louis!   This is my cat, Louis! =^._.^=
+ Louis is a yellow tabby cat, and he is 5 years old. He likes to eat, look out the window, groom himself, and sleep.
+ He is not the nicest cat, but he has a really pretty voice. He is really soft also.
+He used to be an indoor/outdoor cat, but he would dig up our neighbors&#39; gardens that we now have to keep him inside :( He would still try to run out the door whenever he gets a chance.</description>
+    </item>
+    
+  </channel>
+</rss>

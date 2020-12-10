@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>GitHub on My Website</title>
+    <link>/tags/github/</link>
+    <description>Recent content in GitHub on My Website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Wed, 09 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/github/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Pushing your website up to GitHub</title>
+      <link>/post/2020/12/09/test-post/</link>
+      <pubDate>Wed, 09 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/09/test-post/</guid>
+      <description>Pushing your website up to GitHub Just follow these steps to push your website to GitHub!
+Go to your terminal
+ Type pwd to check your directory. You will get something like /stor/home/ek8435/website/public
+ Type git init to initialize the local git repository. You will get something like Initialized empty Git repository in /stor/home/ek8435/website/public/.git/
+ Type and run git add .
+ Type and run git commit -m &amp;quot;test site&amp;quot;</description>
+    </item>
+    
+  </channel>
+</rss>

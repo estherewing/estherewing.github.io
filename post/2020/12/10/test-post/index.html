@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Esther Kim" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../../../../img/favicon.ico">
+    <title>Regular Expressions Basics</title>
+    <meta name="generator" content="Hugo 0.79.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../../../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../../../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../../../../post/">BLOG</a></li>
+        
+        <li><a href="../../../../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../../../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../../../../post/2020/12/10/test-post/">Regular Expressions Basics</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         December 10, 2020 
+            &nbsp;&nbsp;
+            
+            <span class="label label-success">python</span>
+            
+            <span class="label label-success">regular expressions</span>
+            
+            <span class="label label-success">regex</span>
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+<link href="../../../../../rmarkdown-libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="../../../../../rmarkdown-libs/anchor-sections/anchor-sections.js"></script>
+
+
+<center>
+<div class="figure">
+<img src="../../../../../post/2020-12-10-regex_files/codingcat.gif" />
+
+</div>
+Coding can be difficult, but you are not alone!
+</center>
+<div id="regular-expressions" class="section level1">
+<h1>Regular Expressions</h1>
+<p>A regular expression, also known as regex, is a part of Python that is useful for finding matches of specific search patterns.</p>
+<div id="regex-symbols" class="section level2">
+<h2>Regex Symbols</h2>
+<p>These symbols below are used to match any or specific characters! It may seem like it is a lot, but don't worry! The more you practice, the easier it gets.</p>
+<center>
+<div class="figure">
+<img src="../../../../../post/2020-12-10-regex_files/regexsymbols.png" style="width:50.0%" />
+
+</div>
+Regex Symbols (from Dr. Woodward's F20 SDS348_Regex1 slides)
+</center>
+<p>This might be confusing if this is your first time learning regex. Let's look at some examples with these symbols to help you understand regex better!</p>
+</div>
+<div id="regex-examples" class="section level2">
+<h2>Regex Examples</h2>
+<div id="using-re.findallrexpression-string" class="section level3">
+<h3>Using re.findall(r&quot;expression&quot;, string)</h3>
+<p>re.findall(r&quot;expression&quot;, string) is used to find all matches of a pattern.</p>
+<p>Let's say that we have a string, <code>I love my cat!</code> and that we want to match every alphanumeric character.</p>
+<p>Since we only want alphanumeric characters, we will use <code>\w</code>, which will match every alphanumeric character. Note that we will get a list of single characters because we did not use <code>+</code> or <code>*</code> to match more characters.</p>
+<pre class="python"><code>import re
+
+string=&quot;I love my cat!&quot;
+re.findall(r&quot;\w&quot;, string)</code></pre>
+<pre><code>## [&#39;I&#39;, &#39;l&#39;, &#39;o&#39;, &#39;v&#39;, &#39;e&#39;, &#39;m&#39;, &#39;y&#39;, &#39;c&#39;, &#39;a&#39;, &#39;t&#39;]</code></pre>
+<p>But now, let's put <code>+</code> after <code>\w</code>. This will match any alphanumeric character occurring one or more times!</p>
+<pre class="python"><code>import re
+
+string=&quot;I love my cat!&quot;
+re.findall(r&quot;\w+&quot;, string)</code></pre>
+<pre><code>## [&#39;I&#39;, &#39;love&#39;, &#39;my&#39;, &#39;cat&#39;]</code></pre>
+<p>Now, it's your turn! Write a Python program that matches all numbers from the string, <code>Louis is a yellow tabby cat. He will turn 6 in May 2021. He is pretty chubby because he loves to eat. He weighs about 17 pounds. He gets fed 3 times a day. Occasionally, he would get about 5 pieces of treats. He sleeps about 14 hours a day.</code> You can do this in many different ways, but use <code>\d</code> for this example!</p>
+<p>Answer:</p>
+<pre class="python"><code>import re
+
+string=&quot;Louis is a yellow tabby cat. He will turn 6 in May 2021. He is pretty chubby because he loves to eat. He weighs about 17 pounds. He gets fed 3 times a day. Occasionally, he would get about 5 pieces of treats. He sleeps about 14 hours a day.&quot;
+
+re.findall(r&quot;\d+&quot;, string)</code></pre>
+<pre><code>## [&#39;6&#39;, &#39;2021&#39;, &#39;17&#39;, &#39;3&#39;, &#39;5&#39;, &#39;14&#39;]</code></pre>
+<p>I hope you have a better understanding of regex and how to use <code>re.findall()</code> to find anything you want! I will write more blog posts to teach you more about regex. Stay tuned!</p>
+</div>
+</div>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../../../../js/docs.min.js"></script>
+<script src="../../../../../js/main.js"></script>
+
+<script src="../../../../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

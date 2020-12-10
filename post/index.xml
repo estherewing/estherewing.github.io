@@ -6,28 +6,53 @@
     <description>Recent content in Posts on My Website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Fri, 04 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 10 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Test Post</title>
+      <title>Regular Expressions Basics</title>
+      <link>/post/2020/12/10/test-post/</link>
+      <pubDate>Thu, 10 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/10/test-post/</guid>
+      <description>Coding can be difficult, but you are not alone!  Regular Expressions A regular expression, also known as regex, is a part of Python that is useful for finding matches of specific search patterns.
+Regex Symbols These symbols below are used to match any or specific characters! It may seem like it is a lot, but don&#39;t worry! The more you practice, the easier it gets.</description>
+    </item>
+    
+    <item>
+      <title>Pushing your website up to GitHub</title>
+      <link>/post/2020/12/09/test-post/</link>
+      <pubDate>Wed, 09 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/09/test-post/</guid>
+      <description>Pushing your website up to GitHub Just follow these steps to push your website to GitHub!
+Go to your terminal
+ Type pwd to check your directory. You will get something like /stor/home/ek8435/website/public
+ Type git init to initialize the local git repository. You will get something like Initialized empty Git repository in /stor/home/ek8435/website/public/.git/
+ Type and run git add .
+ Type and run git commit -m &amp;quot;test site&amp;quot;</description>
+    </item>
+    
+    <item>
+      <title>Using Reticulate</title>
+      <link>/post/2020/12/06/using-reticulate/</link>
+      <pubDate>Sun, 06 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/06/using-reticulate/</guid>
+      <description>Reticulate Whenever you need R and Python to work together and share information, you can use reticulate.
+This is fairly easy!
+When you insert a chunck (shortcut: Ctrl+Alt+I OR Command+Option+I), you will see {r}. That means that that chunk will be using R. You can change {r} to {python} to simply switch the chunk to a Python code chunk.
+First, you need to run library(reticulate) in the R code chunk to make R and Python communicate with each other!</description>
+    </item>
+    
+    <item>
+      <title>Meet My Cat</title>
       <link>/post/2020/12/04/test-post/</link>
       <pubDate>Fri, 04 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>/post/2020/12/04/test-post/</guid>
-      <description>This is my cat! =^._.^=
-Heading of my post! Content of my post!
-Subheading More content
-hist(quakes$mag) quakes &amp;lt;- quakes import re match=re.match(r&amp;quot;\d+&amp;quot;, &amp;quot;SDS348&amp;quot;) r.quakes.mag.mean() ## 4.6204000000000001   How to Upload to GitHub ek8435@educcomp04:~/website$ cd /website/public ek8435@educcomp04:/website/public$ pwd /stor/home/ek8435/website/public ek8435@educcomp04:~/website/public$ git init Initialized empty Git repository in /stor/home/ek8435/website/public/.git/ ek8435@educcomp04:~/website/public$ git add . ek8435@educcomp04:~/website/public$ git commit -m &amp;quot;test site&amp;quot; ek8435@educcomp04:~/website/public$ git remote add origin https://github.com/estherewing/estherewing.github.io.git ek8435@educcomp04:~/website/public$ git push origin master</description>
-    </item>
-    
-    <item>
-      <title>Hello R Markdown</title>
-      <link>/post/2015/07/23/hello-r-markdown/</link>
-      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
-      
-      <guid>/post/2015/07/23/hello-r-markdown/</guid>
-      <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
-You can embed an R code chunk like this:
-summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.</description>
+      <description>Meet Louis!   This is my cat, Louis! =^._.^=
+ Louis is a yellow tabby cat, and he is 5 years old. He likes to eat, look out the window, groom himself, and sleep.
+ He is not the nicest cat, but he has a really pretty voice. He is really soft also.
+He used to be an indoor/outdoor cat, but he would dig up our neighbors&#39; gardens that we now have to keep him inside :( He would still try to run out the door whenever he gets a chance.</description>
     </item>
     
   </channel>

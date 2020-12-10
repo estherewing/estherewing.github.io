@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Python on My Website</title>
+    <link>/categories/python/</link>
+    <description>Recent content in Python on My Website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 10 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/categories/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Regular Expressions Basics</title>
+      <link>/post/2020/12/10/test-post/</link>
+      <pubDate>Thu, 10 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/10/test-post/</guid>
+      <description>Coding can be difficult, but you are not alone!  Regular Expressions A regular expression, also known as regex, is a part of Python that is useful for finding matches of specific search patterns.
+Regex Symbols These symbols below are used to match any or specific characters! It may seem like it is a lot, but don&#39;t worry! The more you practice, the easier it gets.</description>
+    </item>
+    
+    <item>
+      <title>Pushing your website up to GitHub</title>
+      <link>/post/2020/12/09/test-post/</link>
+      <pubDate>Wed, 09 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/09/test-post/</guid>
+      <description>Pushing your website up to GitHub Just follow these steps to push your website to GitHub!
+Go to your terminal
+ Type pwd to check your directory. You will get something like /stor/home/ek8435/website/public
+ Type git init to initialize the local git repository. You will get something like Initialized empty Git repository in /stor/home/ek8435/website/public/.git/
+ Type and run git add .
+ Type and run git commit -m &amp;quot;test site&amp;quot;</description>
+    </item>
+    
+    <item>
+      <title>Using Reticulate</title>
+      <link>/post/2020/12/06/using-reticulate/</link>
+      <pubDate>Sun, 06 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/06/using-reticulate/</guid>
+      <description>Reticulate Whenever you need R and Python to work together and share information, you can use reticulate.
+This is fairly easy!
+When you insert a chunck (shortcut: Ctrl+Alt+I OR Command+Option+I), you will see {r}. That means that that chunk will be using R. You can change {r} to {python} to simply switch the chunk to a Python code chunk.
+First, you need to run library(reticulate) in the R code chunk to make R and Python communicate with each other!</description>
+    </item>
+    
+  </channel>
+</rss>

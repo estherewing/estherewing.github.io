@@ -1,37 +1,47 @@
 ---
-title: Test Post
-author: ''
+title: Meet My Cat
+author: 'Esther Kim'
 date: '2020-12-04'
 slug: test-post
 categories: []
-tags: []
+tags: ["cat", "pets", "yellow tabby"]
 description: ''
 ---
 
+#Meet Louis!
+
 <center>
-![](/post/2020-12-04-test-post_files/Ranger 8.jpg){width=50%} </center>
+![](/post/2020-12-04-test-post_files/Louis5.jpg){width=50%} 
 
-This is my cat! =^._.^= 
+This is my cat, Louis! =^._.^= 
 
-# Heading of my post!
+![](/post/2020-12-04-test-post_files/Louis3.jpg){width=50%} 
 
-Content of my post!
 
-## Subheading
+Louis is a yellow tabby cat, and he is 5 years old. He likes to eat, look out the window, groom himself, and sleep.
 
-More content
 
-```{r}
-hist(quakes$mag)
-quakes <- quakes
-```
+![](/post/2020-12-04-test-post_files/Louis4.jpg){width=50%} 
 
-```{python}
-import re
-match=re.match(r"\d+", "SDS348")
 
-r.quakes.mag.mean()
-```
+He is not the nicest cat, but he has a really pretty voice. He is really soft also. 
+
+He used to be an indoor/outdoor cat, but he would dig up our neighbors' gardens that we now have to keep him inside :( He would still try to run out the door whenever he gets a chance. 
+
+
+![](/post/2020-12-04-test-post_files/Louis1.jpg){width=50%} 
+
+
+
+
+Louis is pretty smart. He observed my family opening doors, using door handles, that he learned to open doors by himself. He would randomly come into my room when he is bored. 
+
+Louis can be really goofy and funny, too!
+
+
+![](/post/2020-12-04-test-post_files/Louis2.jpg){width=50%} 
+</center>
+
 
 # How to Upload to GitHub
 ek8435@educcomp04:~/website$ cd ~/website/public

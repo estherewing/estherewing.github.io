@@ -1,0 +1,33 @@
+---
+title: Pushing your website up to GitHub
+author: ''
+date: '2020-12-09'
+slug: test-post
+categories: ["Python"]
+tags: ["GitHub"]
+description: ''
+---
+
+<center>
+![](/post/2020-12-09-github_files/laptop.jpeg){width=80%}
+</center>
+
+
+# Pushing your website up to GitHub
+Just follow these steps to push your website to GitHub!
+
+1. Go to your terminal
+
+2. Type `pwd` to check your directory. You will get something like `/stor/home/ek8435/website/public`
+
+3. Type `git init` to initialize the local git repository. You will get something like `Initialized empty Git repository in /stor/home/ek8435/website/public/.git/`
+
+4. Type and run `git add .`
+
+5. Type and run `git commit -m "test site"`
+
+6. Link your computer to your GitHub repository by running `git remote add origin https://github.com/YourGithubUsername/test_repo.git`. For me, my command looks like `git remote add origin https://github.com/estherewing/estherewing.github.io.git`. You can go to GitHub and copy this command.
+
+7. Finally, run `git push origin master` and type in your username and password.
+
+8. Voilà! Your website is now up on GitHub!

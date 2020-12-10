@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>regular expressions on My Website</title>
+    <link>/tags/regular-expressions/</link>
+    <description>Recent content in regular expressions on My Website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 10 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/regular-expressions/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Regular Expressions Basics</title>
+      <link>/post/2020/12/10/test-post/</link>
+      <pubDate>Thu, 10 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/10/test-post/</guid>
+      <description>Coding can be difficult, but you are not alone!  Regular Expressions A regular expression, also known as regex, is a part of Python that is useful for finding matches of specific search patterns.
+Regex Symbols These symbols below are used to match any or specific characters! It may seem like it is a lot, but don&#39;t worry! The more you practice, the easier it gets.</description>
+    </item>
+    
+  </channel>
+</rss>
